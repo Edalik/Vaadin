@@ -1,0 +1,13 @@
+INSERT INTO status (name) VALUES ('В наличии');
+INSERT INTO status (name) VALUES ('Нет в наличии');
+INSERT INTO category (name) VALUES ('Ноутбук');
+INSERT INTO category (name) VALUES ('Смартфон');
+INSERT INTO category (name) VALUES ('ТВ');
+INSERT INTO product (brand, price, category_id, status_id) VALUES ('HP', 100, 1, 1);
+INSERT INTO product (brand, price, category_id, status_id) VALUES ('Apple', 200, 2, 1);
+INSERT INTO product (brand, price, category_id, status_id) VALUES ('Samsung', 300, 3, 1);
+INSERT INTO product (brand, price, category_id, status_id) VALUES ('Apple', 400, 1, 2);
+INSERT INTO product (brand, price, category_id, status_id) VALUES ('Samsung', 500, 2, 2);
+INSERT INTO product (brand, price, category_id, status_id) VALUES ('LG', 600, 3, 2);
+INSERT INTO users (login, password, role) VALUES ('user', '$2a$10$DrgZoEa1GEiwjV299yaXzOWj.6scMj8JieWhrLWCbxe0CPR91JmJi', 'USER');
+INSERT INTO users (login, password, role) VALUES ('admin', '$2a$10$DrgZoEa1GEiwjV299yaXzOWj.6scMj8JieWhrLWCbxe0CPR91JmJi', 'ADMIN');
