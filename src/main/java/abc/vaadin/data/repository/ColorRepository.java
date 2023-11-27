@@ -1,14 +1,14 @@
 package abc.vaadin.data.repository;
 
-import abc.vaadin.data.entity.Category;
+import abc.vaadin.data.entity.Color;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.util.List;
 
-public interface CategoryRepository extends JpaRepository<Category, Integer> {
-    @Query("select c from Category c " +
+public interface ColorRepository extends JpaRepository<Color, Integer> {
+    @Query("select c from Color c " +
             "where lower(c.name) like lower(concat('%', :searchTerm, '%'))")
-    List<Category> search(@Param("searchTerm") String searchTerm);
+    List<Color> search(@Param("searchTerm") String searchTerm);
 }

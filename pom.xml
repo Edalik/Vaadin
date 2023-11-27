@@ -10,7 +10,7 @@
     </parent>
     <groupId>abc</groupId>
     <artifactId>Vaadin</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <version>Course</version>
     <name>Vaadin</name>
     <description>Vaadin</description>
     <properties>

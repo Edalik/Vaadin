@@ -1,49 +1,28 @@
 package abc.vaadin.components;
 
-import abc.vaadin.data.entity.Category;
 import abc.vaadin.data.entity.Color;
-import abc.vaadin.data.entity.Product;
-import abc.vaadin.data.entity.Status;
 import com.vaadin.flow.component.ComponentEvent;
 import com.vaadin.flow.component.ComponentEventListener;
 import com.vaadin.flow.component.Key;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
-import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.formlayout.FormLayout;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
-import com.vaadin.flow.component.textfield.IntegerField;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.binder.Binder;
 import com.vaadin.flow.shared.Registration;
 
-import java.util.List;
-
-public class ProductForm extends FormLayout {
-    Binder<Product> binder = new Binder<>(Product.class);
-    TextField brand = new TextField("Бренд");
-    TextField model = new TextField("Модель");
-    IntegerField price = new IntegerField("Цена");
-    ComboBox<Color> color = new ComboBox<>("Цвет");
-    ComboBox<Category> category = new ComboBox<>("Категория");
-    ComboBox<Status> status = new ComboBox<>("Статус");
+public class ColorForm extends FormLayout {
+    Binder<Color> binder = new Binder<>(Color.class);
+    TextField name = new TextField("Цвет");
 
     Button save = new Button("Сохранить");
     Button delete = new Button("Удалить");
     Button close = new Button("Отменить");
 
-    public ProductForm(List<Color> colors, List<Category> categories, List<Status> statuses) {
-        color.setItems(colors);
-        color.setItemLabelGenerator(Color::getName);
-
-        category.setItems(categories);
-        category.setItemLabelGenerator(Category::getName);
-
-        status.setItems(statuses);
-        status.setItemLabelGenerator(Status::getName);
-
+    public ColorForm() {
         binder.bindInstanceFields(this);
-        add(brand, model, price, color, category, status, createButtonsLayout());
+        add(name, createButtonsLayout());
     }
 
     private HorizontalLayout createButtonsLayout() {
@@ -69,38 +48,38 @@ public class ProductForm extends FormLayout {
         }
     }
 
-    public void setProduct(Product product) {
-        binder.setBean(product);
+    public void setName(Color name) {
+        binder.setBean(name);
     }
 
-    public static abstract class ProductFormEvent extends ComponentEvent<ProductForm> {
-        private Product product;
+    public static abstract class ColorFormEvent extends ComponentEvent<ColorForm> {
+        private Color color;
 
-        protected ProductFormEvent(ProductForm source, Product product) {
+        protected ColorFormEvent(ColorForm source, Color color) {
             super(source, false);
-            this.product = product;
+            this.color = color;
         }
 
-        public Product getProduct() {
-            return product;
-        }
-    }
-
-    public static class SaveEvent extends ProductFormEvent {
-        SaveEvent(ProductForm source, Product product) {
-            super(source, product);
+        public Color getColor() {
+            return color;
         }
     }
 
-    public static class DeleteEvent extends ProductFormEvent {
-        DeleteEvent(ProductForm source, Product product) {
-            super(source, product);
+    public static class SaveEvent extends ColorFormEvent {
+        SaveEvent(ColorForm source, Color color) {
+            super(source, color);
+        }
+    }
+
+    public static class DeleteEvent extends ColorFormEvent {
+        DeleteEvent(ColorForm source, Color color) {
+            super(source, color);
         }
 
     }
 
-    public static class CloseEvent extends ProductFormEvent {
-        CloseEvent(ProductForm source) {
+    public static class CloseEvent extends ColorFormEvent {
+        CloseEvent(ColorForm source) {
             super(source, null);
         }
     }

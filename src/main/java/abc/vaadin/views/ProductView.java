@@ -67,6 +67,7 @@ public class ProductView extends VerticalLayout {
         private final TextField brand = new TextField("Бренд");
         private final IntegerField priceFloor = new IntegerField("Цена от...");
         private final IntegerField priceCeiling = new IntegerField("Цена до...");
+        private final MultiSelectComboBox<Color> colors = new MultiSelectComboBox<>("Цвета");
         private final MultiSelectComboBox<Category> categories = new MultiSelectComboBox<>("Категории");
         private final CheckboxGroup<Status> statuses = new CheckboxGroup<>("Статус");
 
@@ -75,6 +76,9 @@ public class ProductView extends VerticalLayout {
             setWidthFull();
             addClassNames(LumoUtility.Padding.Horizontal.LARGE, LumoUtility.Padding.Vertical.MEDIUM,
                     LumoUtility.BoxSizing.BORDER);
+
+            colors.setItems(productService.findAllColors(""));
+            colors.setItemLabelGenerator(Color::getName);
 
             categories.setItems(productService.findAllCategories(""));
             categories.setItemLabelGenerator(Category::getName);
@@ -90,6 +94,7 @@ public class ProductView extends VerticalLayout {
                 brand.clear();
                 priceFloor.clear();
                 priceCeiling.clear();
+                colors.clear();
                 categories.clear();
                 statuses.clear();
                 onSearch.run();
@@ -104,7 +109,7 @@ public class ProductView extends VerticalLayout {
             actions.setWidthFull();
             actions.setAlignItems(Alignment.BASELINE);
 
-            HorizontalLayout filters = new HorizontalLayout(brand, priceFloor, priceCeiling, categories, statuses);
+            HorizontalLayout filters = new HorizontalLayout(brand, priceFloor, priceCeiling, colors, categories, statuses);
             filters.setWidthFull();
             filters.setAlignItems(Alignment.BASELINE);
 
@@ -145,6 +150,15 @@ public class ProductView extends VerticalLayout {
                 predicates.add(priceMatch);
 
             }
+            if (!colors.isEmpty()) {
+                String databaseColumn = "color";
+                List<Predicate> colorPredicates = new ArrayList<>();
+                for (Color color : colors.getValue()) {
+                    colorPredicates
+                            .add(criteriaBuilder.equal(criteriaBuilder.literal(color), root.get(databaseColumn)));
+                }
+                predicates.add(criteriaBuilder.or(colorPredicates.toArray(Predicate[]::new)));
+            }
             if (!categories.isEmpty()) {
                 String databaseColumn = "category";
                 List<Predicate> categoryPredicates = new ArrayList<>();
@@ -176,7 +190,7 @@ public class ProductView extends VerticalLayout {
     }
 
     private void configureForm() {
-        productForm = new ProductForm(productService.findAllCategories(""), productService.findAllStatuses(""));
+        productForm = new ProductForm(productService.findAllColors(""), productService.findAllCategories(""), productService.findAllStatuses(""));
         productForm.addSaveListener(this::saveProduct);
         productForm.addDeleteListener(this::deleteProduct);
         productForm.addCloseListener(e -> closeEditor());
@@ -196,9 +210,11 @@ public class ProductView extends VerticalLayout {
 
     private void configureGrid() {
         grid.setSizeFull();
-        grid.setColumns("brand", "price");
+        grid.setColumns("brand", "model", "price");
         grid.getColumns().get(0).setHeader("Бренд");
-        grid.getColumns().get(1).setHeader("Цена");
+        grid.getColumns().get(1).setHeader("Модель");
+        grid.getColumns().get(2).setHeader("Цена");
+        grid.addColumn(product -> product.getColor().getName()).setHeader("Цвет");
         grid.addColumn(product -> product.getCategory().getName()).setHeader("Категория");
         grid.addColumn(product -> product.getStatus().getName()).setHeader("Статус");
         grid.getColumns().forEach(col -> col.setAutoWidth(true));
@@ -234,7 +250,7 @@ public class ProductView extends VerticalLayout {
         return toolbar;
     }
 
-    private void addToCart(Long product_id, Long user_id) {
+    private void addToCart(Integer product_id, Integer user_id) {
         cartRepository.save(new Cart(product_id, user_id));
         addToCart.setEnabled(false);
     }

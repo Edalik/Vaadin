@@ -10,7 +10,13 @@ import java.util.Set;
 @Entity
 public class Product extends AbstractEntity {
     private String brand;
+    private String model;
     private Integer price;
+    @ManyToOne
+    @JoinColumn(name = "color_id")
+    @NotNull
+    @JsonIgnoreProperties({"colors"})
+    private Color color;
     @ManyToOne
     @JoinColumn(name = "category_id")
     @NotNull
@@ -44,6 +50,22 @@ public class Product extends AbstractEntity {
         this.brand = brand;
     }
 
+    public String getModel() {
+        return model;
+    }
+
+    public void setModel(String model) {
+        this.model = model;
+    }
+
+    public Color getColor() {
+        return color;
+    }
+
+    public void setColor(Color color) {
+        this.color = color;
+    }
+
     public Category getCategory() {
         return category;
     }
@@ -64,6 +86,7 @@ public class Product extends AbstractEntity {
     public String toString() {
         return "Product{" +
                 "brand='" + brand + '\'' +
+                ", model='" + model + '\'' +
                 ", price=" + price +
                 ", category=" + category +
                 ", status=" + status +

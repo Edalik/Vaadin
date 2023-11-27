@@ -1,9 +1,11 @@
 package abc.vaadin.data.service;
 
 import abc.vaadin.data.entity.Category;
+import abc.vaadin.data.entity.Color;
 import abc.vaadin.data.entity.Product;
 import abc.vaadin.data.entity.Status;
 import abc.vaadin.data.repository.CategoryRepository;
+import abc.vaadin.data.repository.ColorRepository;
 import abc.vaadin.data.repository.ProductRepository;
 import abc.vaadin.data.repository.StatusRepository;
 import org.springframework.data.domain.Page;
@@ -16,12 +18,14 @@ import java.util.List;
 @Service
 public class ProductService {
     private final ProductRepository productRepository;
+    private final ColorRepository colorRepository;
     private final CategoryRepository categoryRepository;
     private final StatusRepository statusRepository;
 
 
-    public ProductService(ProductRepository productRepository, CategoryRepository categoryRepository, StatusRepository statusRepository) {
+    public ProductService(ProductRepository productRepository, ColorRepository colorRepository, CategoryRepository categoryRepository, StatusRepository statusRepository) {
         this.productRepository = productRepository;
+        this.colorRepository = colorRepository;
         this.categoryRepository = categoryRepository;
         this.statusRepository = statusRepository;
     }
@@ -53,6 +57,17 @@ public class ProductService {
         productRepository.save(product);
     }
 
+    public void saveColor(Color color) {
+        if (color == null) {
+            return;
+        }
+        colorRepository.save(color);
+    }
+
+    public void deleteColor(Color color) {
+        colorRepository.delete(color);
+    }
+
     public void saveCategory(Category category) {
         if (category == null) {
             return;
@@ -73,6 +88,14 @@ public class ProductService {
 
     public void deleteStatus(Status status) {
         statusRepository.delete(status);
+    }
+
+    public List<Color> findAllColors(String stringFilter) {
+        if (stringFilter == null || stringFilter.isEmpty()) {
+            return colorRepository.findAll();
+        } else {
+            return colorRepository.search(stringFilter);
+        }
     }
 
     public List<Category> findAllCategories(String stringFilter) {

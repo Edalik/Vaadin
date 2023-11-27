@@ -51,9 +51,11 @@ public class CartView extends VerticalLayout {
 
     private void configureGrid() {
         grid.setSizeFull();
-        grid.setColumns("brand", "price");
+        grid.setColumns("brand", "model", "price");
         grid.getColumns().get(0).setHeader("Бренд");
-        grid.getColumns().get(1).setHeader("Цена");
+        grid.getColumns().get(1).setHeader("Модель");
+        grid.getColumns().get(2).setHeader("Цена");
+        grid.addColumn(product -> product.getColor().getName()).setHeader("Цвет");
         grid.addColumn(product -> product.getCategory().getName()).setHeader("Категория");
         grid.addColumn(product -> product.getStatus().getName()).setHeader("Статус");
         grid.getColumns().forEach(col -> col.setAutoWidth(true));
@@ -78,7 +80,7 @@ public class CartView extends VerticalLayout {
         return toolbar;
     }
 
-    private void removeFromCart(Long product_id, Long user_id) {
+    private void removeFromCart(Integer product_id, Integer user_id) {
         cartRepository.delete(cartRepository.getByIDs(product_id, user_id));
         removeFromCart.setEnabled(false);
         updateList();

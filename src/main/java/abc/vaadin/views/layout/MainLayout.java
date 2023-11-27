@@ -10,6 +10,7 @@ import com.vaadin.flow.component.html.*;
 import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.menubar.MenuBar;
+import com.vaadin.flow.component.menubar.MenuBarVariant;
 import com.vaadin.flow.router.RouterLink;
 import com.vaadin.flow.spring.security.AuthenticationContext;
 import com.vaadin.flow.theme.lumo.LumoUtility;
@@ -104,18 +105,13 @@ public class MainLayout extends AppLayout {
     }
 
     private MenuItemInfo[] createMenuItems() {
-        return new MenuItemInfo[]{ //
-                new MenuItemInfo("Товары", VaadinIcon.DATABASE.create(), ProductView.class), //
-
-                new MenuItemInfo("Корзина", VaadinIcon.DATABASE.create(),
-                        CartView.class), //
-
-                new MenuItemInfo("Категории", VaadinIcon.DATABASE.create(),
-                        CategoryView.class), //
-                new MenuItemInfo("Статусы", VaadinIcon.DATABASE.create(),
-                        StatusView.class), //
-                new MenuItemInfo("Пользователи", VaadinIcon.DATABASE.create(),
-                        UserView.class)
+        return new MenuItemInfo[]{
+                new MenuItemInfo("Товары", VaadinIcon.DATABASE.create(), ProductView.class),
+                new MenuItemInfo("Корзина", VaadinIcon.DATABASE.create(), CartView.class),
+                new MenuItemInfo("Цвета", VaadinIcon.DATABASE.create(), ColorView.class),
+                new MenuItemInfo("Категории", VaadinIcon.DATABASE.create(), CategoryView.class),
+                new MenuItemInfo("Статусы", VaadinIcon.DATABASE.create(), StatusView.class),
+                new MenuItemInfo("Пользователи", VaadinIcon.DATABASE.create(), UserView.class)
         };
     }
 }
