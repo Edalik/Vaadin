@@ -69,10 +69,14 @@ public class UserView extends VerticalLayout {
 
     private void configureGrid() {
         grid.setSizeFull();
-        grid.setColumns("login", "password", "role");
-        grid.getColumns().get(0).setHeader("Логин");
-        grid.getColumns().get(1).setHeader("Пароль");
-        grid.getColumns().get(2).setHeader("Роль");
+        grid.setColumns("surname", "name", "patronymic", "avatar", "login", "password", "role");
+        grid.getColumns().get(0).setHeader("Фамилия");
+        grid.getColumns().get(1).setHeader("Имя");
+        grid.getColumns().get(2).setHeader("Отчество");
+        grid.getColumns().get(3).setHeader("Аватар");
+        grid.getColumns().get(4).setHeader("Логин");
+        grid.getColumns().get(5).setHeader("Пароль");
+        grid.getColumns().get(6).setHeader("Роль");
         grid.getColumns().forEach(col -> col.setAutoWidth(true));
         grid.asSingleSelect().addValueChangeListener(event ->
                 editUser(event.getValue()));

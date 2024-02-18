@@ -38,6 +38,10 @@ public class UserService implements UserDetailsService {
         userRepository.delete(user);
     }
 
+    public User findByLogin(String login) {
+        return userRepository.findByLogin(login);
+    }
+
     public List<User> findAllUsers(String stringFilter) {
         if (stringFilter == null || stringFilter.isEmpty()) {
             return userRepository.findAll();

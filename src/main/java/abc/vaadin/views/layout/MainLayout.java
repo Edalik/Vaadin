@@ -1,10 +1,13 @@
 package abc.vaadin.views.layout;
 
 import abc.vaadin.data.entity.Role;
+import abc.vaadin.data.entity.User;
+import abc.vaadin.data.service.UserService;
 import abc.vaadin.security.SecurityService;
 import abc.vaadin.views.*;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.applayout.AppLayout;
+import com.vaadin.flow.component.avatar.Avatar;
 import com.vaadin.flow.component.contextmenu.MenuItem;
 import com.vaadin.flow.component.html.*;
 import com.vaadin.flow.component.icon.Icon;
@@ -48,10 +51,15 @@ public class MainLayout extends AppLayout {
 
     private final transient AuthenticationContext authContext;
     private SecurityService securityService;
+    private UserService userService;
+    User user;
 
-    public MainLayout(SecurityService securityService, AuthenticationContext authContext) {
+    public MainLayout(SecurityService securityService, AuthenticationContext authContext, UserService userService) {
         this.securityService = securityService;
+        this.userService = userService;
         this.authContext = authContext;
+
+        user = userService.findByLogin(securityService.getAuthenticatedUser().getUsername());
 
         addToNavbar(createHeaderContent());
     }
@@ -73,12 +81,18 @@ public class MainLayout extends AppLayout {
 
         MenuItem userName = userMenu.addItem("");
         Div div = new Div();
-        div.add("Добро пожаловать, " + securityService.getAuthenticatedUser().getUsername());
+        div.add(user.getSurname() + " " + user.getName());
+        Avatar avatar = new Avatar();
+        avatar.setImage(user.getAvatar());
+        div.add(avatar);
         div.add(new Icon("lumo", "dropdown"));
         div.getElement().getStyle().set("display", "flex");
         div.getElement().getStyle().set("align-items", "center");
         div.getElement().getStyle().set("gap", "var(--lumo-space-s)");
         userName.add(div);
+        userName.getSubMenu().addItem("Профиль", e -> {
+            getUI().get().navigate("profile");
+        });
         userName.getSubMenu().addItem("Выйти", e -> {
             this.authContext.logout();
         });

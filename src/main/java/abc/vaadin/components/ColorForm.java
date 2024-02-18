@@ -15,7 +15,6 @@ import com.vaadin.flow.shared.Registration;
 public class ColorForm extends FormLayout {
     Binder<Color> binder = new Binder<>(Color.class);
     TextField name = new TextField("Цвет");
-
     Button save = new Button("Сохранить");
     Button delete = new Button("Удалить");
     Button close = new Button("Отменить");
@@ -48,7 +47,7 @@ public class ColorForm extends FormLayout {
         }
     }
 
-    public void setName(Color name) {
+    public void setColor(Color name) {
         binder.setBean(name);
     }
 

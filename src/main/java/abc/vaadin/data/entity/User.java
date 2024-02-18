@@ -8,6 +8,10 @@ import java.util.Set;
 @Entity
 @Table(name = "users")
 public class User extends AbstractEntity {
+    private String surname;
+    private String name;
+    private String patronymic;
+    private String avatar;
     @Column(unique = true)
     private String login;
     private String password;
@@ -21,12 +25,6 @@ public class User extends AbstractEntity {
     private Set<Product> products = new HashSet<>();
 
     public User() {
-    }
-
-    public User(String login, String password, Role role) {
-        this.login = login;
-        this.password = password;
-        this.role = role;
     }
 
     public String getPassword() {
@@ -51,5 +49,37 @@ public class User extends AbstractEntity {
 
     public void setRole(Role role) {
         this.role = role;
+    }
+
+    public String getSurname() {
+        return surname;
+    }
+
+    public void setSurname(String surname) {
+        this.surname = surname;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getPatronymic() {
+        return patronymic;
+    }
+
+    public void setPatronymic(String patronymic) {
+        this.patronymic = patronymic;
+    }
+
+    public String getAvatar() {
+        return avatar;
+    }
+
+    public void setAvatar(String avatar) {
+        this.avatar = avatar;
     }
 }

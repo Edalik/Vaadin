@@ -96,7 +96,7 @@ public class ColorView extends VerticalLayout {
     }
 
     private void closeEditor() {
-        colorForm.setName(null);
+        colorForm.setColor(null);
         colorForm.setVisible(false);
     }
 
@@ -104,7 +104,7 @@ public class ColorView extends VerticalLayout {
         if (color == null) {
             closeEditor();
         } else {
-            colorForm.setName(color);
+            colorForm.setColor(color);
             colorForm.setVisible(true);
         }
     }

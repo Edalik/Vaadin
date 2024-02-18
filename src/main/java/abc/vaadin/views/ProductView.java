@@ -214,9 +214,9 @@ public class ProductView extends VerticalLayout {
         grid.getColumns().get(0).setHeader("Бренд");
         grid.getColumns().get(1).setHeader("Модель");
         grid.getColumns().get(2).setHeader("Цена");
-        grid.addColumn(product -> product.getColor().getName()).setHeader("Цвет");
-        grid.addColumn(product -> product.getCategory().getName()).setHeader("Категория");
-        grid.addColumn(product -> product.getStatus().getName()).setHeader("Статус");
+        grid.addColumn(product -> product.getColor().getName()).setHeader("Цвет").setSortable(true);
+        grid.addColumn(product -> product.getCategory().getName()).setHeader("Категория").setSortable(true);
+        grid.addColumn(product -> product.getStatus().getName()).setHeader("Статус").setSortable(true);
         grid.getColumns().forEach(col -> col.setAutoWidth(true));
         grid.setItems(query -> productService.list(
                 PageRequest.of(query.getPage(), query.getPageSize(), VaadinSpringDataHelpers.toSpringDataSort(query)),

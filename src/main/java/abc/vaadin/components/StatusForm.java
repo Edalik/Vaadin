@@ -15,7 +15,6 @@ import com.vaadin.flow.shared.Registration;
 public class StatusForm extends FormLayout {
     Binder<Status> binder = new Binder<>(Status.class);
     TextField name = new TextField("Статус");
-
     Button save = new Button("Сохранить");
     Button delete = new Button("Удалить");
     Button close = new Button("Отменить");

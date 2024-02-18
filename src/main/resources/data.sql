@@ -41,5 +41,5 @@ INSERT INTO product (brand, model,  price, color_id, category_id, status_id) VAL
 INSERT INTO product (brand, model,  price, color_id, category_id, status_id) VALUES ('DEXP', 'AC-CX9ONF', 16999, 2, 7, 1);
 INSERT INTO product (brand, model,  price, color_id, category_id, status_id) VALUES ('Electrolux', 'EACS/I-12HAT/N3_21Y', 49499, 2, 7, 1);
 INSERT INTO product (brand, model,  price, color_id, category_id, status_id) VALUES ('Centek', 'CT-65FDC12', 32299, 2, 7, 1);
-INSERT INTO users (login, password, role) VALUES ('user', '$2a$10$DrgZoEa1GEiwjV299yaXzOWj.6scMj8JieWhrLWCbxe0CPR91JmJi', 'USER');
-INSERT INTO users (login, password, role) VALUES ('admin', '$2a$10$DrgZoEa1GEiwjV299yaXzOWj.6scMj8JieWhrLWCbxe0CPR91JmJi', 'ADMIN');
+INSERT INTO users (surname, name, patronymic, avatar, login, password, role) VALUES ('Юзеров', 'Юзер', 'Юзерович', 'https://icons.veryicon.com/png/o/internet--web/prejudice/user-128.png', 'user', '$2a$10$DrgZoEa1GEiwjV299yaXzOWj.6scMj8JieWhrLWCbxe0CPR91JmJi', 'USER');
+INSERT INTO users (surname, name, patronymic, avatar, login, password, role) VALUES ('Админов', 'Админ', 'Админович', 'https://icons.veryicon.com/png/o/miscellaneous/yuanql/icon-admin.png', 'admin', '$2a$10$DrgZoEa1GEiwjV299yaXzOWj.6scMj8JieWhrLWCbxe0CPR91JmJi', 'ADMIN');

@@ -1,13 +1,7 @@
 package abc.vaadin.data.service;
 
-import abc.vaadin.data.entity.Category;
-import abc.vaadin.data.entity.Color;
-import abc.vaadin.data.entity.Product;
-import abc.vaadin.data.entity.Status;
-import abc.vaadin.data.repository.CategoryRepository;
-import abc.vaadin.data.repository.ColorRepository;
-import abc.vaadin.data.repository.ProductRepository;
-import abc.vaadin.data.repository.StatusRepository;
+import abc.vaadin.data.entity.*;
+import abc.vaadin.data.repository.*;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
@@ -21,13 +15,13 @@ public class ProductService {
     private final ColorRepository colorRepository;
     private final CategoryRepository categoryRepository;
     private final StatusRepository statusRepository;
-
-
-    public ProductService(ProductRepository productRepository, ColorRepository colorRepository, CategoryRepository categoryRepository, StatusRepository statusRepository) {
+    private final CartRepository cartRepository;
+    public ProductService(ProductRepository productRepository, ColorRepository colorRepository, CategoryRepository categoryRepository, StatusRepository statusRepository, CartRepository cartRepository) {
         this.productRepository = productRepository;
         this.colorRepository = colorRepository;
         this.categoryRepository = categoryRepository;
         this.statusRepository = statusRepository;
+        this.cartRepository = cartRepository;
     }
 
     public Page<Product> list(Pageable pageable, Specification<Product> filter) {
@@ -112,5 +106,17 @@ public class ProductService {
         } else {
             return statusRepository.search(stringFilter);
         }
+    }
+
+    public Cart getByIDs(Integer productId, Integer userId) {
+        return cartRepository.getByIDs(productId, userId);
+    }
+
+    public void deleteCart(Cart cart) {
+        cartRepository.delete(cart);
+    }
+
+    public List<Product> findByUserID(Integer user_id) {
+        return cartRepository.findByUserID(user_id);
     }
 }

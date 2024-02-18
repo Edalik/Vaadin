@@ -4,6 +4,7 @@ import abc.vaadin.data.entity.Product;
 import abc.vaadin.data.repository.CartRepository;
 import abc.vaadin.data.repository.UserRepository;
 import abc.vaadin.data.service.ProductService;
+import abc.vaadin.data.service.UserService;
 import abc.vaadin.security.SecurityService;
 import abc.vaadin.views.layout.MainLayout;
 import com.vaadin.flow.component.Component;
@@ -25,15 +26,13 @@ public class CartView extends VerticalLayout {
     TextField filterText = new TextField();
     Button removeFromCart = new Button("Удалить из корзины");
     ProductService productService;
+    UserService userService;
     SecurityService securityService;
-    CartRepository cartRepository;
-    UserRepository userRepository;
 
-    public CartView(ProductService productService, SecurityService securityService, CartRepository cartRepository, UserRepository userRepository) {
+    public CartView(ProductService productService, SecurityService securityService, UserService userService) {
         this.productService = productService;
+        this.userService = userService;
         this.securityService = securityService;
-        this.cartRepository = cartRepository;
-        this.userRepository = userRepository;
 
         setSizeFull();
 
@@ -55,9 +54,9 @@ public class CartView extends VerticalLayout {
         grid.getColumns().get(0).setHeader("Бренд");
         grid.getColumns().get(1).setHeader("Модель");
         grid.getColumns().get(2).setHeader("Цена");
-        grid.addColumn(product -> product.getColor().getName()).setHeader("Цвет");
-        grid.addColumn(product -> product.getCategory().getName()).setHeader("Категория");
-        grid.addColumn(product -> product.getStatus().getName()).setHeader("Статус");
+        grid.addColumn(product -> product.getColor().getName()).setHeader("Цвет").setSortable(true);
+        grid.addColumn(product -> product.getCategory().getName()).setHeader("Категория").setSortable(true);
+        grid.addColumn(product -> product.getStatus().getName()).setHeader("Статус").setSortable(true);
         grid.getColumns().forEach(col -> col.setAutoWidth(true));
         grid.asSingleSelect().addValueChangeListener(event -> removeFromCart.setEnabled(event.getValue() != null));
     }
@@ -71,7 +70,7 @@ public class CartView extends VerticalLayout {
         HorizontalLayout toolbar;
 
         removeFromCart.setEnabled(false);
-        removeFromCart.addClickListener(click -> removeFromCart(grid.asSingleSelect().getValue().getId(), userRepository.findByLogin(securityService.getAuthenticatedUser().getUsername()).getId()));
+        removeFromCart.addClickListener(click -> removeFromCart(grid.asSingleSelect().getValue().getId(), userService.findByLogin(securityService.getAuthenticatedUser().getUsername()).getId()));
 
         toolbar = new HorizontalLayout(filterText, removeFromCart);
         toolbar.setWidthFull();
@@ -81,12 +80,12 @@ public class CartView extends VerticalLayout {
     }
 
     private void removeFromCart(Integer product_id, Integer user_id) {
-        cartRepository.delete(cartRepository.getByIDs(product_id, user_id));
+        productService.deleteCart(productService.getByIDs(product_id, user_id));
         removeFromCart.setEnabled(false);
         updateList();
     }
 
     private void updateList() {
-        grid.setItems(cartRepository.findByUserID(userRepository.findByLogin(securityService.getAuthenticatedUser().getUsername()).getId()));
+        grid.setItems(productService.findByUserID(userService.findByLogin(securityService.getAuthenticatedUser().getUsername()).getId()));
     }
 }

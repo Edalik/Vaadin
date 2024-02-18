@@ -15,7 +15,6 @@ import com.vaadin.flow.shared.Registration;
 public class CategoryForm extends FormLayout {
     Binder<Category> binder = new Binder<>(Category.class);
     TextField name = new TextField("Категория");
-
     Button save = new Button("Сохранить");
     Button delete = new Button("Удалить");
     Button close = new Button("Отменить");
@@ -48,7 +47,7 @@ public class CategoryForm extends FormLayout {
         }
     }
 
-    public void setName(Category name) {
+    public void setCategory(Category name) {
         binder.setBean(name);
     }
 

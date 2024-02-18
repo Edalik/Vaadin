@@ -96,7 +96,7 @@ public class CategoryView extends VerticalLayout {
     }
 
     private void closeEditor() {
-        categoryForm.setName(null);
+        categoryForm.setCategory(null);
         categoryForm.setVisible(false);
     }
 
@@ -104,7 +104,7 @@ public class CategoryView extends VerticalLayout {
         if (category == null) {
             closeEditor();
         } else {
-            categoryForm.setName(category);
+            categoryForm.setCategory(category);
             categoryForm.setVisible(true);
         }
     }
