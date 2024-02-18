@@ -47,8 +47,8 @@ public class CategoryForm extends FormLayout {
         }
     }
 
-    public void setCategory(Category name) {
-        binder.setBean(name);
+    public void setCategory(Category category) {
+        binder.setBean(category);
     }
 
     public static abstract class CategoryFormEvent extends ComponentEvent<CategoryForm> {

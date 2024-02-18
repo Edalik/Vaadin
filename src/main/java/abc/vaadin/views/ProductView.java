@@ -5,6 +5,7 @@ import abc.vaadin.data.entity.*;
 import abc.vaadin.data.repository.CartRepository;
 import abc.vaadin.data.repository.UserRepository;
 import abc.vaadin.data.service.ProductService;
+import abc.vaadin.data.service.UserService;
 import abc.vaadin.security.SecurityService;
 import abc.vaadin.views.layout.MainLayout;
 import com.vaadin.flow.component.Component;
@@ -31,6 +32,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.jpa.domain.Specification;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 @Route(value = "", layout = MainLayout.class)
@@ -42,15 +44,13 @@ public class ProductView extends VerticalLayout {
     Button addToCart = new Button("В корзину");
     ProductForm productForm;
     ProductService productService;
+    UserService userService;
     SecurityService securityService;
-    UserRepository userRepository;
-    CartRepository cartRepository;
 
-    public ProductView(ProductService productService, SecurityService securityService, UserRepository userRepository, CartRepository cartRepository) {
+    public ProductView(ProductService productService, UserService userService,SecurityService securityService) {
         this.productService = productService;
+        this.userService = userService;
         this.securityService = securityService;
-        this.userRepository = userRepository;
-        this.cartRepository = cartRepository;
 
         setSizeFull();
 
@@ -69,6 +69,7 @@ public class ProductView extends VerticalLayout {
         private final IntegerField priceCeiling = new IntegerField("Цена до...");
         private final MultiSelectComboBox<Color> colors = new MultiSelectComboBox<>("Цвета");
         private final MultiSelectComboBox<Category> categories = new MultiSelectComboBox<>("Категории");
+        private final MultiSelectComboBox<Provider> providers = new MultiSelectComboBox<>("Поставщик");
         private final CheckboxGroup<Status> statuses = new CheckboxGroup<>("Статус");
 
         public Filters(Runnable onSearch, ProductService productService) {
@@ -82,6 +83,9 @@ public class ProductView extends VerticalLayout {
 
             categories.setItems(productService.findAllCategories(""));
             categories.setItemLabelGenerator(Category::getName);
+
+            providers.setItems(productService.findAllProviders(""));
+            providers.setItemLabelGenerator(Provider::toString);
 
             statuses.setItems(productService.findAllStatuses(""));
             statuses.setItemLabelGenerator(Status::getName);
@@ -97,6 +101,7 @@ public class ProductView extends VerticalLayout {
                 colors.clear();
                 categories.clear();
                 statuses.clear();
+                providers.clear();
                 onSearch.run();
             });
             Button searchBtn = new Button("Применить");
@@ -109,7 +114,7 @@ public class ProductView extends VerticalLayout {
             actions.setWidthFull();
             actions.setAlignItems(Alignment.BASELINE);
 
-            HorizontalLayout filters = new HorizontalLayout(brand, priceFloor, priceCeiling, colors, categories, statuses);
+            HorizontalLayout filters = new HorizontalLayout(brand, priceFloor, priceCeiling, colors, categories, providers, statuses);
             filters.setWidthFull();
             filters.setAlignItems(Alignment.BASELINE);
 
@@ -168,6 +173,15 @@ public class ProductView extends VerticalLayout {
                 }
                 predicates.add(criteriaBuilder.or(categoryPredicates.toArray(Predicate[]::new)));
             }
+            if (!providers.isEmpty()) {
+                String databaseColumn = "provider";
+                List<Predicate> providerPredicates = new ArrayList<>();
+                for (Provider provider : providers.getValue()) {
+                    providerPredicates
+                            .add(criteriaBuilder.equal(criteriaBuilder.literal(provider), root.get(databaseColumn)));
+                }
+                predicates.add(criteriaBuilder.or(providerPredicates.toArray(Predicate[]::new)));
+            }
             if (!statuses.isEmpty()) {
                 String databaseColumn = "status";
                 List<Predicate> statusPredicates = new ArrayList<>();
@@ -190,7 +204,7 @@ public class ProductView extends VerticalLayout {
     }
 
     private void configureForm() {
-        productForm = new ProductForm(productService.findAllColors(""), productService.findAllCategories(""), productService.findAllStatuses(""));
+        productForm = new ProductForm(productService.findAllColors(""), productService.findAllCategories(""), productService.findAllStatuses(""), productService.findAllProviders(""));
         productForm.addSaveListener(this::saveProduct);
         productForm.addDeleteListener(this::deleteProduct);
         productForm.addCloseListener(e -> closeEditor());
@@ -217,13 +231,17 @@ public class ProductView extends VerticalLayout {
         grid.addColumn(product -> product.getColor().getName()).setHeader("Цвет").setSortable(true);
         grid.addColumn(product -> product.getCategory().getName()).setHeader("Категория").setSortable(true);
         grid.addColumn(product -> product.getStatus().getName()).setHeader("Статус").setSortable(true);
+        grid.addColumn(product -> product.getProvider().getName()).setHeader("Поставщик").setSortable(true);
+        grid.addColumn(product -> product.getProvider().getEmail()).setHeader("Почта поставщика").setSortable(true);
+        grid.addColumn(product -> product.getProvider().getNumber()).setHeader(" Телефон поставщика").setSortable(true);
+        grid.addColumn(product -> product.getProvider().getCity().getName()).setHeader("Город поставщика").setSortable(true);
         grid.getColumns().forEach(col -> col.setAutoWidth(true));
         grid.setItems(query -> productService.list(
                 PageRequest.of(query.getPage(), query.getPageSize(), VaadinSpringDataHelpers.toSpringDataSort(query)),
                 filters).stream());
         grid.asSingleSelect().addValueChangeListener(event -> addToCart.setEnabled(event.getValue() != null &&
                 event.getValue().getStatus().getName().equals("В наличии") &&
-                cartRepository.getByIDs(event.getValue().getId(), userRepository.findByLogin(securityService.getAuthenticatedUser().getUsername()).getId()) == null));
+                productService.getByIDs(event.getValue().getId(), userService.findByLogin(securityService.getAuthenticatedUser().getUsername()).getId()) == null));
         if (securityService.getAuthenticatedUser().getAuthorities().toString().contains(Role.ADMIN.toString())) {
             grid.asSingleSelect().addValueChangeListener(event -> editProduct(event.getValue()));
         }
@@ -235,7 +253,7 @@ public class ProductView extends VerticalLayout {
         addProductButton.addClickListener(click -> addProduct());
 
         addToCart.setEnabled(false);
-        addToCart.addClickListener(click -> addToCart(grid.asSingleSelect().getValue().getId(), userRepository.findByLogin(securityService.getAuthenticatedUser().getUsername()).getId()));
+        addToCart.addClickListener(click -> addToCart(grid.asSingleSelect().getValue().getId(), userService.findByLogin(securityService.getAuthenticatedUser().getUsername()).getId()));
 
         HorizontalLayout toolbar;
 
@@ -251,7 +269,7 @@ public class ProductView extends VerticalLayout {
     }
 
     private void addToCart(Integer product_id, Integer user_id) {
-        cartRepository.save(new Cart(product_id, user_id));
+        productService.saveCart(new Cart(product_id, user_id));
         addToCart.setEnabled(false);
     }
 

@@ -1,6 +1,6 @@
 package abc.vaadin.components;
 
-import abc.vaadin.data.entity.Color;
+import abc.vaadin.data.entity.City;
 import com.vaadin.flow.component.ComponentEvent;
 import com.vaadin.flow.component.ComponentEventListener;
 import com.vaadin.flow.component.Key;
@@ -12,14 +12,13 @@ import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.binder.Binder;
 import com.vaadin.flow.shared.Registration;
 
-public class ColorForm extends FormLayout {
-    Binder<Color> binder = new Binder<>(Color.class);
-    TextField name = new TextField("Цвет");
+public class CityForm extends FormLayout {
+    Binder<City> binder = new Binder<>(City.class);
+    TextField name = new TextField("Город");
     Button save = new Button("Сохранить");
     Button delete = new Button("Удалить");
     Button close = new Button("Отменить");
-
-    public ColorForm() {
+    public CityForm() {
         binder.bindInstanceFields(this);
         add(name, createButtonsLayout());
     }
@@ -33,8 +32,8 @@ public class ColorForm extends FormLayout {
         close.addClickShortcut(Key.ESCAPE);
 
         save.addClickListener(event -> validateAndSave());
-        delete.addClickListener(event -> fireEvent(new DeleteEvent(this, binder.getBean())));
-        close.addClickListener(event -> fireEvent(new CloseEvent(this)));
+        delete.addClickListener(event -> fireEvent(new CityForm.DeleteEvent(this, binder.getBean())));
+        close.addClickListener(event -> fireEvent(new CityForm.CloseEvent(this)));
 
         binder.addStatusChangeListener(e -> save.setEnabled(binder.isValid()));
 
@@ -47,51 +46,51 @@ public class ColorForm extends FormLayout {
         }
     }
 
-    public void setColor(Color color) {
-        binder.setBean(color);
+    public void setCity(City city) {
+        binder.setBean(city);
     }
 
-    public static abstract class ColorFormEvent extends ComponentEvent<ColorForm> {
-        private Color color;
+    public static abstract class CityFormEvent extends ComponentEvent<CityForm> {
+        private City city;
 
-        protected ColorFormEvent(ColorForm source, Color color) {
+        protected CityFormEvent(CityForm source, City city) {
             super(source, false);
-            this.color = color;
+            this.city = city;
         }
 
-        public Color getColor() {
-            return color;
-        }
-    }
-
-    public static class SaveEvent extends ColorFormEvent {
-        SaveEvent(ColorForm source, Color color) {
-            super(source, color);
+        public City getCity() {
+            return city;
         }
     }
 
-    public static class DeleteEvent extends ColorFormEvent {
-        DeleteEvent(ColorForm source, Color color) {
-            super(source, color);
+    public static class SaveEvent extends CityForm.CityFormEvent {
+        SaveEvent(CityForm source, City city) {
+            super(source, city);
+        }
+    }
+
+    public static class DeleteEvent extends CityForm.CityFormEvent {
+        DeleteEvent(CityForm source, City city) {
+            super(source, city);
         }
 
     }
 
-    public static class CloseEvent extends ColorFormEvent {
-        CloseEvent(ColorForm source) {
+    public static class CloseEvent extends CityForm.CityFormEvent {
+        CloseEvent(CityForm source) {
             super(source, null);
         }
     }
 
-    public Registration addDeleteListener(ComponentEventListener<DeleteEvent> listener) {
-        return addListener(DeleteEvent.class, listener);
+    public Registration addDeleteListener(ComponentEventListener<CityForm.DeleteEvent> listener) {
+        return addListener(CityForm.DeleteEvent.class, listener);
     }
 
-    public Registration addSaveListener(ComponentEventListener<SaveEvent> listener) {
-        return addListener(SaveEvent.class, listener);
+    public Registration addSaveListener(ComponentEventListener<CityForm.SaveEvent> listener) {
+        return addListener(CityForm.SaveEvent.class, listener);
     }
 
-    public Registration addCloseListener(ComponentEventListener<CloseEvent> listener) {
-        return addListener(CloseEvent.class, listener);
+    public Registration addCloseListener(ComponentEventListener<CityForm.CloseEvent> listener) {
+        return addListener(CityForm.CloseEvent.class, listener);
     }
 }

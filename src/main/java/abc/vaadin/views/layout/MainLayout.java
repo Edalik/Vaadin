@@ -6,6 +6,7 @@ import abc.vaadin.data.service.UserService;
 import abc.vaadin.security.SecurityService;
 import abc.vaadin.views.*;
 import com.vaadin.flow.component.Component;
+import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.applayout.AppLayout;
 import com.vaadin.flow.component.avatar.Avatar;
 import com.vaadin.flow.component.contextmenu.MenuItem;
@@ -91,10 +92,10 @@ public class MainLayout extends AppLayout {
         div.getElement().getStyle().set("gap", "var(--lumo-space-s)");
         userName.add(div);
         userName.getSubMenu().addItem("Профиль", e -> {
-            getUI().get().navigate("profile");
+            UI.getCurrent().navigate("profile");
         });
         userName.getSubMenu().addItem("Выйти", e -> {
-            this.authContext.logout();
+            securityService.logout();
         });
 
         layout.add(userMenu);
@@ -125,6 +126,8 @@ public class MainLayout extends AppLayout {
                 new MenuItemInfo("Цвета", VaadinIcon.DATABASE.create(), ColorView.class),
                 new MenuItemInfo("Категории", VaadinIcon.DATABASE.create(), CategoryView.class),
                 new MenuItemInfo("Статусы", VaadinIcon.DATABASE.create(), StatusView.class),
+                new MenuItemInfo("Города", VaadinIcon.DATABASE.create(), CityView.class),
+                new MenuItemInfo("Поставщики", VaadinIcon.DATABASE.create(), ProviderView.class),
                 new MenuItemInfo("Пользователи", VaadinIcon.DATABASE.create(), UserView.class)
         };
     }

@@ -5,7 +5,6 @@ import abc.vaadin.data.service.UserService;
 import abc.vaadin.security.SecurityService;
 import abc.vaadin.views.layout.MainLayout;
 import abc.vaadin.views.registration.PasswordValidator;
-import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;

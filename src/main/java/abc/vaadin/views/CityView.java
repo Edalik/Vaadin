@@ -1,7 +1,9 @@
 package abc.vaadin.views;
 
-import abc.vaadin.components.StatusForm;
-import abc.vaadin.data.entity.Status;
+import abc.vaadin.components.CityForm;
+import abc.vaadin.components.CityForm;
+import abc.vaadin.data.entity.City;
+import abc.vaadin.data.entity.City;
 import abc.vaadin.data.service.ProductService;
 import abc.vaadin.security.SecurityService;
 import abc.vaadin.views.layout.MainLayout;
@@ -16,17 +18,17 @@ import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 import jakarta.annotation.security.PermitAll;
 
-@Route(value = "status", layout = MainLayout.class)
-@PageTitle("Статусы")
+@Route(value = "city", layout = MainLayout.class)
+@PageTitle("Города")
 @PermitAll
-public class StatusView extends VerticalLayout {
-    Grid<Status> grid = new Grid<>(Status.class);
+public class CityView extends VerticalLayout {
+    Grid<City> grid = new Grid<>(City.class);
     TextField filterText = new TextField();
-    StatusForm statusForm;
+    CityForm cityForm;
     ProductService productService;
     SecurityService securityService;
 
-    public StatusView(ProductService productService, SecurityService securityService) {
+    public CityView(ProductService productService, SecurityService securityService) {
         this.productService = productService;
         this.securityService = securityService;
 
@@ -41,28 +43,28 @@ public class StatusView extends VerticalLayout {
     }
 
     private Component getContent() {
-        HorizontalLayout content = new HorizontalLayout(grid, statusForm);
+        HorizontalLayout content = new HorizontalLayout(grid, cityForm);
         content.setFlexGrow(2, grid);
-        content.setFlexGrow(1, statusForm);
+        content.setFlexGrow(1, cityForm);
         content.setSizeFull();
         return content;
     }
 
     private void configureForm() {
-        statusForm = new StatusForm();
-        statusForm.addSaveListener(this::saveStatus);
-        statusForm.addDeleteListener(this::deleteStatus);
-        statusForm.addCloseListener(e -> closeEditor());
+        cityForm = new CityForm();
+        cityForm.addSaveListener(this::saveCity);
+        cityForm.addDeleteListener(this::deleteCity);
+        cityForm.addCloseListener(e -> closeEditor());
     }
 
-    private void saveStatus(StatusForm.SaveEvent event) {
-        productService.saveStatus(event.getStatus());
+    private void saveCity(CityForm.SaveEvent event) {
+        productService.saveCity(event.getCity());
         updateList();
         closeEditor();
     }
 
-    private void deleteStatus(StatusForm.DeleteEvent event) {
-        productService.deleteStatus(event.getStatus());
+    private void deleteCity(CityForm.DeleteEvent event) {
+        productService.deleteCity(event.getCity());
         updateList();
         closeEditor();
     }
@@ -70,24 +72,25 @@ public class StatusView extends VerticalLayout {
     private void configureGrid() {
         grid.setSizeFull();
         grid.setColumns("name");
-        grid.getColumns().get(0).setHeader("Статус");
+        grid.getColumns().get(0).setHeader("Город");
         grid.getColumns().forEach(col -> col.setAutoWidth(true));
         grid.asSingleSelect().addValueChangeListener(event ->
-                editStatus(event.getValue()));
+                editCity(event.getValue()));
     }
 
     private HorizontalLayout getToolbar() {
-        filterText.setPlaceholder("Поиск по статусу");
+        filterText.setPlaceholder("Поиск по названию");
         filterText.setClearButtonVisible(true);
         filterText.setValueChangeMode(ValueChangeMode.LAZY);
         filterText.addValueChangeListener(e -> updateList());
 
-        Button addStatusButton = new Button("Добавить статус");
-        addStatusButton.addClickListener(click -> addStatus());
+        Button addCityButton = new Button("Добавить город");
+        addCityButton.addClickListener(click -> addCity());
 
         HorizontalLayout toolbar;
 
-        toolbar = new HorizontalLayout(filterText, addStatusButton);
+        toolbar = new HorizontalLayout(filterText, addCityButton);
+
         toolbar.setWidthFull();
         toolbar.setAlignItems(Alignment.BASELINE);
 
@@ -95,25 +98,25 @@ public class StatusView extends VerticalLayout {
     }
 
     private void closeEditor() {
-        statusForm.setStatus(null);
-        statusForm.setVisible(false);
+        cityForm.setCity(null);
+        cityForm.setVisible(false);
     }
 
-    private void editStatus(Status status) {
-        if (status == null) {
+    private void editCity(City city) {
+        if (city == null) {
             closeEditor();
         } else {
-            statusForm.setStatus(status);
-            statusForm.setVisible(true);
+            cityForm.setCity(city);
+            cityForm.setVisible(true);
         }
     }
 
-    private void addStatus() {
+    private void addCity() {
         grid.asSingleSelect().clear();
-        editStatus(new Status());
+        editCity(new City());
     }
 
     private void updateList() {
-        grid.setItems(productService.findAllStatuses(filterText.getValue()));
+        grid.setItems(productService.findAllCities(filterText.getValue()));
     }
 }

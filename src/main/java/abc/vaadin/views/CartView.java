@@ -62,7 +62,7 @@ public class CartView extends VerticalLayout {
     }
 
     private HorizontalLayout getToolbar() {
-        filterText.setPlaceholder("Сортировать по бренду...");
+        filterText.setPlaceholder("Поиск по бренду");
         filterText.setClearButtonVisible(true);
         filterText.setValueChangeMode(ValueChangeMode.LAZY);
         filterText.addValueChangeListener(e -> updateList());

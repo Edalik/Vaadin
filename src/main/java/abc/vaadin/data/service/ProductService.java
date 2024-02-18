@@ -16,12 +16,19 @@ public class ProductService {
     private final CategoryRepository categoryRepository;
     private final StatusRepository statusRepository;
     private final CartRepository cartRepository;
-    public ProductService(ProductRepository productRepository, ColorRepository colorRepository, CategoryRepository categoryRepository, StatusRepository statusRepository, CartRepository cartRepository) {
+    private final CityRepository cityRepository;
+    private final ProviderRepository providerRepository;
+
+    public ProductService(ProductRepository productRepository, ColorRepository colorRepository, CategoryRepository categoryRepository, StatusRepository statusRepository, CartRepository cartRepository,
+                          CityRepository cityRepository,
+                          ProviderRepository providerRepository) {
         this.productRepository = productRepository;
         this.colorRepository = colorRepository;
         this.categoryRepository = categoryRepository;
         this.statusRepository = statusRepository;
         this.cartRepository = cartRepository;
+        this.cityRepository = cityRepository;
+        this.providerRepository = providerRepository;
     }
 
     public Page<Product> list(Pageable pageable, Specification<Product> filter) {
@@ -116,7 +123,49 @@ public class ProductService {
         cartRepository.delete(cart);
     }
 
+    public void saveCart(Cart cart) {
+        cartRepository.save(cart);
+    }
+
     public List<Product> findByUserID(Integer user_id) {
         return cartRepository.findByUserID(user_id);
+    }
+
+    public void saveCity(City city) {
+        if (city == null) {
+            return;
+        }
+        cityRepository.save(city);
+    }
+
+    public void deleteCity(City city) {
+        cityRepository.delete(city);
+    }
+
+    public List<City> findAllCities(String stringFilter) {
+        if (stringFilter == null || stringFilter.isEmpty()) {
+            return cityRepository.findAll();
+        } else {
+            return cityRepository.search(stringFilter);
+        }
+    }
+
+    public void saveProvider(Provider provider) {
+        if (provider == null) {
+            return;
+        }
+        providerRepository.save(provider);
+    }
+
+    public void deleteProvider(Provider provider) {
+        providerRepository.delete(provider);
+    }
+
+    public List<Provider> findAllProviders(String stringFilter) {
+        if (stringFilter == null || stringFilter.isEmpty()) {
+            return providerRepository.findAll();
+        } else {
+            return providerRepository.search(stringFilter);
+        }
     }
 }

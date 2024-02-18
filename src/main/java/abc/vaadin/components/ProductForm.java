@@ -1,9 +1,6 @@
 package abc.vaadin.components;
 
-import abc.vaadin.data.entity.Category;
-import abc.vaadin.data.entity.Color;
-import abc.vaadin.data.entity.Product;
-import abc.vaadin.data.entity.Status;
+import abc.vaadin.data.entity.*;
 import com.vaadin.flow.component.ComponentEvent;
 import com.vaadin.flow.component.ComponentEventListener;
 import com.vaadin.flow.component.Key;
@@ -27,12 +24,12 @@ public class ProductForm extends FormLayout {
     ComboBox<Color> color = new ComboBox<>("Цвет");
     ComboBox<Category> category = new ComboBox<>("Категория");
     ComboBox<Status> status = new ComboBox<>("Статус");
-
+    ComboBox<Provider> provider = new ComboBox<>("Поставщик");
     Button save = new Button("Сохранить");
     Button delete = new Button("Удалить");
     Button close = new Button("Отменить");
 
-    public ProductForm(List<Color> colors, List<Category> categories, List<Status> statuses) {
+    public ProductForm(List<Color> colors, List<Category> categories, List<Status> statuses, List<Provider> providers) {
         color.setItems(colors);
         color.setItemLabelGenerator(Color::getName);
 
@@ -42,8 +39,11 @@ public class ProductForm extends FormLayout {
         status.setItems(statuses);
         status.setItemLabelGenerator(Status::getName);
 
+        provider.setItems(providers);
+        provider.setItemLabelGenerator(Provider::toString);
+
         binder.bindInstanceFields(this);
-        add(brand, model, price, color, category, status, createButtonsLayout());
+        add(brand, model, price, color, category, status, provider, createButtonsLayout());
     }
 
     private HorizontalLayout createButtonsLayout() {

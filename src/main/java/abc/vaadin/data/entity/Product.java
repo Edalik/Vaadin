@@ -27,7 +27,11 @@ public class Product extends AbstractEntity {
     @NotNull
     @JsonIgnoreProperties({"statuses"})
     private Status status;
-
+    @ManyToOne
+    @JoinColumn(name = "provider_id")
+    @NotNull
+    @JsonIgnoreProperties({"providers"})
+    private Provider provider;
     @ManyToMany(cascade = CascadeType.ALL)
     @JoinTable(name = "cart",
             joinColumns = @JoinColumn(name = "product_id", referencedColumnName = "id"),
@@ -80,6 +84,14 @@ public class Product extends AbstractEntity {
 
     public void setStatus(Status status) {
         this.status = status;
+    }
+
+    public Provider getProvider() {
+        return provider;
+    }
+
+    public void setProvider(Provider provider) {
+        this.provider = provider;
     }
 
     @Override
