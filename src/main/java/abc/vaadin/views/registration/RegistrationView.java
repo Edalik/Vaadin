@@ -23,10 +23,10 @@ import com.vaadin.flow.server.auth.AnonymousAllowed;
 @AnonymousAllowed
 public class RegistrationView extends VerticalLayout {
     private final Binder<User> binder = new BeanValidationBinder<>(User.class);
-    TextField surname = new TextField("Фамилия");
-    TextField name = new TextField("Имя");
-    TextField patronymic = new TextField("Отчество");
-    TextField avatar = new TextField("Аватар");
+    private final TextField surname = new TextField("Фамилия");
+    private final TextField name = new TextField("Имя");
+    private final TextField patronymic = new TextField("Отчество");
+    private final TextField avatar = new TextField("Аватар");
     private final TextField login = new TextField("Логин");
     private final PasswordField password = new PasswordField("Пароль");
     private final PasswordField passwordConfirm = new PasswordField("Подтвердите пароль");

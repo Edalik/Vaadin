@@ -1,12 +1,14 @@
 package abc.vaadin.views;
 
 import abc.vaadin.components.UserForm;
+import abc.vaadin.data.entity.Status;
 import abc.vaadin.data.entity.User;
 import abc.vaadin.data.service.UserService;
 import abc.vaadin.security.SecurityService;
 import abc.vaadin.views.layout.MainLayout;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.button.Button;
+import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
@@ -19,13 +21,16 @@ import jakarta.annotation.security.RolesAllowed;
 
 @Route(value = "user", layout = MainLayout.class)
 @PageTitle("Пользователи")
-@PermitAll
+@RolesAllowed("ADMIN")
 public class UserView extends VerticalLayout {
     Grid<User> grid = new Grid<>(User.class);
     TextField filterText = new TextField();
+    Button editUser = new Button("Изменить пользователя");
+    User selectedUser = new User();
     UserForm userForm;
     UserService userService;
     SecurityService securityService;
+    Dialog dialog = new Dialog();
 
     public UserView(UserService userService, SecurityService securityService) {
         this.userService = userService;
@@ -42,9 +47,7 @@ public class UserView extends VerticalLayout {
     }
 
     private Component getContent() {
-        HorizontalLayout content = new HorizontalLayout(grid, userForm);
-        content.setFlexGrow(2, grid);
-        content.setFlexGrow(1, userForm);
+        HorizontalLayout content = new HorizontalLayout(grid);
         content.setSizeFull();
         return content;
     }
@@ -79,8 +82,8 @@ public class UserView extends VerticalLayout {
         grid.getColumns().get(5).setHeader("Пароль");
         grid.getColumns().get(6).setHeader("Роль");
         grid.getColumns().forEach(col -> col.setAutoWidth(true));
-        grid.asSingleSelect().addValueChangeListener(event ->
-                editUser(event.getValue()));
+        grid.asSingleSelect().addValueChangeListener(event -> selectedUser = event.getValue());
+        grid.asSingleSelect().addValueChangeListener(event -> editUser.setEnabled(event.getValue() != null));
     }
 
     private HorizontalLayout getToolbar() {
@@ -92,9 +95,12 @@ public class UserView extends VerticalLayout {
         Button addUserButton = new Button("Добавить пользователя");
         addUserButton.addClickListener(click -> addUser());
 
+        editUser.setEnabled(false);
+        editUser.addClickListener(e -> editUser(selectedUser, "Изменение статуса"));
+
         HorizontalLayout toolbar;
 
-        toolbar = new HorizontalLayout(filterText, addUserButton);
+        toolbar = new HorizontalLayout(filterText, addUserButton, editUser);
         toolbar.setWidthFull();
         toolbar.setAlignItems(Alignment.BASELINE);
 
@@ -104,20 +110,24 @@ public class UserView extends VerticalLayout {
     private void closeEditor() {
         userForm.setUser(null);
         userForm.setVisible(false);
+        dialog.close();
     }
 
-    private void editUser(User user) {
+    private void editUser(User user, String string) {
         if (user == null) {
             closeEditor();
         } else {
             userForm.setUser(user);
             userForm.setVisible(true);
+            dialog.add(userForm);
+            dialog.setHeaderTitle(string);
+            dialog.open();
         }
     }
 
     private void addUser() {
         grid.asSingleSelect().clear();
-        editUser(new User());
+        editUser(new User(), "Добавление пользователя");
     }
 
     private void updateList() {

@@ -2,8 +2,6 @@ package abc.vaadin.views;
 
 import abc.vaadin.components.ProductForm;
 import abc.vaadin.data.entity.*;
-import abc.vaadin.data.repository.CartRepository;
-import abc.vaadin.data.repository.UserRepository;
 import abc.vaadin.data.service.ProductService;
 import abc.vaadin.data.service.UserService;
 import abc.vaadin.security.SecurityService;
@@ -13,6 +11,7 @@ import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.checkbox.CheckboxGroup;
 import com.vaadin.flow.component.combobox.MultiSelectComboBox;
+import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
@@ -42,10 +41,13 @@ public class ProductView extends VerticalLayout {
     Grid<Product> grid = new Grid<>(Product.class);
     private Filters filters;
     Button addToCart = new Button("В корзину");
+    Button editProduct = new Button("Изменить товар");
+    Product selectedProduct = new Product();
     ProductForm productForm;
     ProductService productService;
     UserService userService;
     SecurityService securityService;
+    Dialog dialog = new Dialog();
 
     public ProductView(ProductService productService, UserService userService,SecurityService securityService) {
         this.productService = productService;
@@ -59,11 +61,9 @@ public class ProductView extends VerticalLayout {
         configureForm();
 
         add(filters, getToolbar(), getContent());
-        closeEditor();
     }
 
     public static class Filters extends Div implements Specification<Product> {
-
         private final TextField brand = new TextField("Бренд");
         private final IntegerField priceFloor = new IntegerField("Цена от...");
         private final IntegerField priceCeiling = new IntegerField("Цена до...");
@@ -196,9 +196,7 @@ public class ProductView extends VerticalLayout {
     }
 
     private Component getContent() {
-        HorizontalLayout content = new HorizontalLayout(grid, productForm);
-        content.setFlexGrow(2, grid);
-        content.setFlexGrow(1, productForm);
+        HorizontalLayout content = new HorizontalLayout(grid);
         content.setSizeFull();
         return content;
     }
@@ -243,7 +241,8 @@ public class ProductView extends VerticalLayout {
                 event.getValue().getStatus().getName().equals("В наличии") &&
                 productService.getByIDs(event.getValue().getId(), userService.findByLogin(securityService.getAuthenticatedUser().getUsername()).getId()) == null));
         if (securityService.getAuthenticatedUser().getAuthorities().toString().contains(Role.ADMIN.toString())) {
-            grid.asSingleSelect().addValueChangeListener(event -> editProduct(event.getValue()));
+            grid.asSingleSelect().addValueChangeListener(event -> selectedProduct = event.getValue());
+            grid.asSingleSelect().addValueChangeListener(event -> editProduct.setEnabled(event.getValue() != null));
         }
     }
 
@@ -252,13 +251,16 @@ public class ProductView extends VerticalLayout {
         Button addProductButton = new Button("Добавить товар");
         addProductButton.addClickListener(click -> addProduct());
 
+        editProduct.setEnabled(false);
+        editProduct.addClickListener(e -> editProduct(selectedProduct, "Изменение товара"));
+
         addToCart.setEnabled(false);
         addToCart.addClickListener(click -> addToCart(grid.asSingleSelect().getValue().getId(), userService.findByLogin(securityService.getAuthenticatedUser().getUsername()).getId()));
 
         HorizontalLayout toolbar;
 
         if (securityService.getAuthenticatedUser().getAuthorities().toString().contains(Role.ADMIN.toString())) {
-            toolbar = new HorizontalLayout(addToCart, addProductButton);
+            toolbar = new HorizontalLayout(addToCart, addProductButton, editProduct);
         } else {
             toolbar = new HorizontalLayout(addToCart);
         }
@@ -276,20 +278,24 @@ public class ProductView extends VerticalLayout {
     private void closeEditor() {
         productForm.setProduct(null);
         productForm.setVisible(false);
+        dialog.close();
     }
 
-    private void editProduct(Product product) {
+    private void editProduct(Product product, String string) {
         if (product == null) {
             closeEditor();
         } else {
             productForm.setProduct(product);
             productForm.setVisible(true);
+            dialog.add(productForm);
+            dialog.setHeaderTitle(string);
+            dialog.open();
         }
     }
 
     private void addProduct() {
         grid.asSingleSelect().clear();
-        editProduct(new Product());
+        editProduct(new Product(), "Добавление товара");
     }
 
     private void refreshGrid() {

@@ -7,6 +7,7 @@ import abc.vaadin.security.SecurityService;
 import abc.vaadin.views.layout.MainLayout;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.button.Button;
+import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
@@ -15,16 +16,20 @@ import com.vaadin.flow.data.value.ValueChangeMode;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 import jakarta.annotation.security.PermitAll;
+import jakarta.annotation.security.RolesAllowed;
 
 @Route(value = "color", layout = MainLayout.class)
 @PageTitle("Цвета")
-@PermitAll
+@RolesAllowed("ADMIN")
 public class ColorView extends VerticalLayout {
     Grid<Color> grid = new Grid<>(Color.class);
     TextField filterText = new TextField();
+    Button editColor = new Button("Изменить цвет");
+    Color selectedColor = new Color();
     ColorForm colorForm;
     ProductService productService;
     SecurityService securityService;
+    Dialog dialog = new Dialog();
 
     public ColorView(ProductService productService, SecurityService securityService) {
         this.productService = productService;
@@ -41,9 +46,7 @@ public class ColorView extends VerticalLayout {
     }
 
     private Component getContent() {
-        HorizontalLayout content = new HorizontalLayout(grid, colorForm);
-        content.setFlexGrow(2, grid);
-        content.setFlexGrow(1, colorForm);
+        HorizontalLayout content = new HorizontalLayout(grid);
         content.setSizeFull();
         return content;
     }
@@ -72,8 +75,8 @@ public class ColorView extends VerticalLayout {
         grid.setColumns("name");
         grid.getColumns().get(0).setHeader("Цвет");
         grid.getColumns().forEach(col -> col.setAutoWidth(true));
-        grid.asSingleSelect().addValueChangeListener(event ->
-                editColor(event.getValue()));
+        grid.asSingleSelect().addValueChangeListener(event -> selectedColor = event.getValue());
+        grid.asSingleSelect().addValueChangeListener(event -> editColor.setEnabled(event.getValue() != null));
     }
 
     private HorizontalLayout getToolbar() {
@@ -85,9 +88,12 @@ public class ColorView extends VerticalLayout {
         Button addColorButton = new Button("Добавить цвет");
         addColorButton.addClickListener(click -> addColor());
 
+        editColor.setEnabled(false);
+        editColor.addClickListener(e -> editColor(selectedColor, "Изменение цвета"));
+
         HorizontalLayout toolbar;
 
-        toolbar = new HorizontalLayout(filterText, addColorButton);
+        toolbar = new HorizontalLayout(filterText, addColorButton, editColor);
 
         toolbar.setWidthFull();
         toolbar.setAlignItems(Alignment.BASELINE);
@@ -98,20 +104,24 @@ public class ColorView extends VerticalLayout {
     private void closeEditor() {
         colorForm.setColor(null);
         colorForm.setVisible(false);
+        dialog.close();
     }
 
-    private void editColor(Color color) {
+    private void editColor(Color color, String string) {
         if (color == null) {
             closeEditor();
         } else {
             colorForm.setColor(color);
             colorForm.setVisible(true);
+            dialog.add(colorForm);
+            dialog.setHeaderTitle(string);
+            dialog.open();
         }
     }
 
     private void addColor() {
         grid.asSingleSelect().clear();
-        editColor(new Color());
+        editColor(new Color(), "Добавление цвета");
     }
 
     private void updateList() {
