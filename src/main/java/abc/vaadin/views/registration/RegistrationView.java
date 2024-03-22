@@ -8,6 +8,8 @@ import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.html.H2;
+import com.vaadin.flow.component.html.Image;
+import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.PasswordField;
 import com.vaadin.flow.component.textfield.TextField;
@@ -26,6 +28,7 @@ public class RegistrationView extends VerticalLayout {
     private final TextField surname = new TextField("Фамилия");
     private final TextField name = new TextField("Имя");
     private final TextField patronymic = new TextField("Отчество");
+    private final Image image = new Image();
     private final TextField avatar = new TextField("Аватар");
     private final TextField login = new TextField("Логин");
     private final PasswordField password = new PasswordField("Пароль");
@@ -33,6 +36,7 @@ public class RegistrationView extends VerticalLayout {
     private final ComboBox<Role> role = new ComboBox<>();
     private final Button register = new Button("Зарегистрироваться", buttonClickEvent -> register());
     private final UserService userService;
+    boolean isFinishingRegistration = false;
 
     public RegistrationView(UserService userService) {
         this.userService = userService;
@@ -49,7 +53,7 @@ public class RegistrationView extends VerticalLayout {
                 surname,
                 name,
                 patronymic,
-                avatar,
+                createAvatarLayout(),
                 login,
                 password,
                 passwordConfirm,
@@ -64,6 +68,11 @@ public class RegistrationView extends VerticalLayout {
 
         passwordConfirm.addValueChangeListener(e -> binder.validate());
         passwordConfirm.setRequired(true);
+        surname.setVisible(false);
+        name.setVisible(false);
+        patronymic.setVisible(false);
+        image.setVisible(false);
+        avatar.setVisible(false);
     }
 
     private void configureBinder() {
@@ -81,12 +90,40 @@ public class RegistrationView extends VerticalLayout {
         binder.addStatusChangeListener(e -> register.setEnabled(binder.isValid()));
     }
 
+    private HorizontalLayout createAvatarLayout() {
+        image.setHeight("80px");
+        image.setWidth("80px");
+
+        avatar.setWidth("750px");
+        avatar.addValueChangeListener(e -> image.setSrc(avatar.getValue()));
+        avatar.setMaxLength(255);
+
+        HorizontalLayout horizontalLayout = new HorizontalLayout();
+        horizontalLayout.add(image, avatar);
+        horizontalLayout.setAlignItems(Alignment.END);
+
+        return horizontalLayout;
+    }
+
     private void register() {
         try {
-            var user = new User();
-            binder.writeBean(user);
-            userService.saveUser(user);
-            UI.getCurrent().navigate(LoginView.class);
+            if (isFinishingRegistration) {
+                var user = new User();
+                binder.writeBean(user);
+                userService.saveUser(user);
+                UI.getCurrent().navigate(LoginView.class);
+            } else {
+                surname.setVisible(true);
+                name.setVisible(true);
+                patronymic.setVisible(true);
+                image.setVisible(true);
+                avatar.setVisible(true);
+                login.setVisible(false);
+                password.setVisible(false);
+                passwordConfirm.setVisible(false);
+                role.setVisible(false);
+                isFinishingRegistration = true;
+            }
         } catch (ValidationException e) {
         }
     }

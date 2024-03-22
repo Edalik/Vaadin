@@ -56,6 +56,7 @@ public class ProfileView extends VerticalLayout {
 
         avatar.setWidth("750px");
         avatar.addValueChangeListener(e -> image.setSrc(avatar.getValue()));
+        avatar.setMaxLength(255);
 
         HorizontalLayout horizontalLayout = new HorizontalLayout();
         horizontalLayout.add(image, avatar);
