@@ -1,8 +1,6 @@
 package abc.vaadin.views;
 
 import abc.vaadin.data.entity.Product;
-import abc.vaadin.data.repository.CartRepository;
-import abc.vaadin.data.repository.UserRepository;
 import abc.vaadin.data.service.ProductService;
 import abc.vaadin.data.service.UserService;
 import abc.vaadin.security.SecurityService;
@@ -29,7 +27,9 @@ public class CartView extends VerticalLayout {
     UserService userService;
     SecurityService securityService;
 
-    public CartView(ProductService productService, SecurityService securityService, UserService userService) {
+    public CartView(ProductService productService,
+                    SecurityService securityService,
+                    UserService userService) {
         this.productService = productService;
         this.userService = userService;
         this.securityService = securityService;
@@ -70,7 +70,8 @@ public class CartView extends VerticalLayout {
         HorizontalLayout toolbar;
 
         removeFromCart.setEnabled(false);
-        removeFromCart.addClickListener(click -> removeFromCart(grid.asSingleSelect().getValue().getId(), userService.findByLogin(securityService.getAuthenticatedUser().getUsername()).getId()));
+        removeFromCart.addClickListener(click -> removeFromCart(grid.asSingleSelect().getValue().getId(),
+                userService.findByLogin(securityService.getAuthenticatedUser().getUsername()).getId()));
 
         toolbar = new HorizontalLayout(filterText, removeFromCart);
         toolbar.setWidthFull();

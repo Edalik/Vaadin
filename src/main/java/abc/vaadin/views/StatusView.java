@@ -1,7 +1,6 @@
 package abc.vaadin.views;
 
 import abc.vaadin.components.StatusForm;
-import abc.vaadin.data.entity.Provider;
 import abc.vaadin.data.entity.Status;
 import abc.vaadin.data.service.ProductService;
 import abc.vaadin.security.SecurityService;
@@ -16,7 +15,6 @@ import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.value.ValueChangeMode;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
-import jakarta.annotation.security.PermitAll;
 import jakarta.annotation.security.RolesAllowed;
 
 @Route(value = "status", layout = MainLayout.class)

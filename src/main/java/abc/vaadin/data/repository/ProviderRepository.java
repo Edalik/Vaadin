@@ -1,6 +1,5 @@
 package abc.vaadin.data.repository;
 
-import abc.vaadin.data.entity.City;
 import abc.vaadin.data.entity.Provider;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;

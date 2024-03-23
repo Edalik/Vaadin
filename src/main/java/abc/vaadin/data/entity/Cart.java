@@ -3,7 +3,7 @@ package abc.vaadin.data.entity;
 import jakarta.persistence.Entity;
 
 @Entity
-public class Cart extends AbstractEntity{
+public class Cart extends AbstractEntity {
     Integer product_id;
     Integer user_id;
 

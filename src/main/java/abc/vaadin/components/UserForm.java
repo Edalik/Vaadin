@@ -15,7 +15,7 @@ import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.binder.Binder;
 import com.vaadin.flow.shared.Registration;
 
-public class UserForm  extends FormLayout {
+public class UserForm extends FormLayout {
     Binder<User> binder = new Binder<>(User.class);
     TextField surname = new TextField("Фамилия");
     TextField name = new TextField("Имя");
@@ -23,7 +23,7 @@ public class UserForm  extends FormLayout {
     TextField avatar = new TextField("Аватар");
     TextField login = new TextField("Логин");
     PasswordField password = new PasswordField("Пароль");
-    ComboBox<Role> role =new ComboBox<>("Роль");
+    ComboBox<Role> role = new ComboBox<>("Роль");
     Button save = new Button("Сохранить");
     Button delete = new Button("Удалить");
     Button close = new Button("Отменить");
@@ -31,7 +31,7 @@ public class UserForm  extends FormLayout {
     public UserForm() {
         role.setItems(Role.USER);
         role.setValue(Role.USER);
-        
+
         binder.bindInstanceFields(this);
         add(surname, name, patronymic, avatar, login, password, role, createButtonsLayout());
     }

@@ -31,7 +31,6 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.jpa.domain.Specification;
 
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
 
 @Route(value = "", layout = MainLayout.class)
@@ -49,7 +48,9 @@ public class ProductView extends VerticalLayout {
     SecurityService securityService;
     Dialog dialog = new Dialog();
 
-    public ProductView(ProductService productService, UserService userService,SecurityService securityService) {
+    public ProductView(ProductService productService,
+                       UserService userService,
+                       SecurityService securityService) {
         this.productService = productService;
         this.userService = userService;
         this.securityService = securityService;
@@ -122,7 +123,9 @@ public class ProductView extends VerticalLayout {
         }
 
         @Override
-        public Predicate toPredicate(Root<Product> root, CriteriaQuery<?> query, CriteriaBuilder criteriaBuilder) {
+        public Predicate toPredicate(Root<Product> root,
+                                     CriteriaQuery<?> query,
+                                     CriteriaBuilder criteriaBuilder) {
             List<Predicate> predicates = new ArrayList<>();
 
             if (!brand.isEmpty()) {
@@ -138,16 +141,14 @@ public class ProductView extends VerticalLayout {
                         priceFloor.getValue(), priceCeiling.getValue());
                 predicates.add(priceMatch);
 
-            }
-            else if (!priceFloor.isEmpty()) {
+            } else if (!priceFloor.isEmpty()) {
                 String databaseColumn = "price";
 
                 Predicate priceMatch = criteriaBuilder.greaterThan(root.get(databaseColumn),
                         priceFloor.getValue());
                 predicates.add(priceMatch);
 
-            }
-            else if (!priceCeiling.isEmpty()) {
+            } else if (!priceCeiling.isEmpty()) {
                 String databaseColumn = "price";
 
                 Predicate priceMatch = criteriaBuilder.lessThan(root.get(databaseColumn),
@@ -202,7 +203,10 @@ public class ProductView extends VerticalLayout {
     }
 
     private void configureForm() {
-        productForm = new ProductForm(productService.findAllColors(""), productService.findAllCategories(""), productService.findAllStatuses(""), productService.findAllProviders(""));
+        productForm = new ProductForm(productService.findAllColors(""),
+                productService.findAllCategories(""),
+                productService.findAllStatuses(""),
+                productService.findAllProviders(""));
         productForm.addSaveListener(this::saveProduct);
         productForm.addDeleteListener(this::deleteProduct);
         productForm.addCloseListener(e -> closeEditor());
@@ -255,7 +259,8 @@ public class ProductView extends VerticalLayout {
         editProduct.addClickListener(e -> editProduct(selectedProduct, "Изменение товара"));
 
         addToCart.setEnabled(false);
-        addToCart.addClickListener(click -> addToCart(grid.asSingleSelect().getValue().getId(), userService.findByLogin(securityService.getAuthenticatedUser().getUsername()).getId()));
+        addToCart.addClickListener(click -> addToCart(grid.asSingleSelect().getValue().getId(),
+                userService.findByLogin(securityService.getAuthenticatedUser().getUsername()).getId()));
 
         HorizontalLayout toolbar;
 

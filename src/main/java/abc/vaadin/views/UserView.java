@@ -1,7 +1,6 @@
 package abc.vaadin.views;
 
 import abc.vaadin.components.UserForm;
-import abc.vaadin.data.entity.Status;
 import abc.vaadin.data.entity.User;
 import abc.vaadin.data.service.UserService;
 import abc.vaadin.security.SecurityService;
@@ -16,7 +15,6 @@ import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.value.ValueChangeMode;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
-import jakarta.annotation.security.PermitAll;
 import jakarta.annotation.security.RolesAllowed;
 
 @Route(value = "user", layout = MainLayout.class)

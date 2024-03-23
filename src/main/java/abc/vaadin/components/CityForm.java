@@ -18,6 +18,7 @@ public class CityForm extends FormLayout {
     Button save = new Button("Сохранить");
     Button delete = new Button("Удалить");
     Button close = new Button("Отменить");
+
     public CityForm() {
         binder.bindInstanceFields(this);
         add(name, createButtonsLayout());

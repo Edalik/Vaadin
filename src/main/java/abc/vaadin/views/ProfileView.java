@@ -179,7 +179,7 @@ public class ProfileView extends VerticalLayout {
 
     private boolean isPasswordIncorrect(String password, User user) {
         PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
-        if (!passwordEncoder.matches(password, user.getPassword())){
+        if (!passwordEncoder.matches(password, user.getPassword())) {
             Notification notification = new Notification("Неверный пароль");
             notification.addThemeVariants(NotificationVariant.LUMO_ERROR);
             notification.setPosition(Notification.Position.MIDDLE);
@@ -191,8 +191,9 @@ public class ProfileView extends VerticalLayout {
     }
 
     private void validateAndSave() {
-        if (binder.isValid()){
-            userService.saveUser(binder.getBean());
+        if (binder.isValid()) {
+            var user = binder.getBean();
+            userService.updateUser(user.getSurname(), user.getName(), user.getPatronymic(), user.getAvatar(), user.getId());
             UI.getCurrent().getPage().reload();
         }
     }

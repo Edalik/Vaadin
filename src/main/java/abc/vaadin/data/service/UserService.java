@@ -2,7 +2,6 @@ package abc.vaadin.data.service;
 
 import abc.vaadin.data.entity.User;
 import abc.vaadin.data.repository.UserRepository;
-import org.springframework.data.repository.query.Param;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -22,7 +21,7 @@ public class UserService implements UserDetailsService {
         this.passwordEncoder = passwordEncoder;
     }
 
-    public boolean isLoginAvailable(String login){
+    public boolean isLoginAvailable(String login) {
         return userRepository.findByLogin(login) == null;
     }
 
@@ -51,8 +50,8 @@ public class UserService implements UserDetailsService {
         }
     }
 
-    public void updateUser(String login, String surname,String name, String patronymic, String avatar, Integer id){
-        userRepository.updateUser(login, surname,name, patronymic, avatar);
+    public void updateUser(String surname, String name, String patronymic, String avatar, Integer id) {
+        userRepository.updateUser(surname, name, patronymic, avatar, id);
     }
 
     @Override

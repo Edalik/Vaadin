@@ -19,7 +19,11 @@ public class ProductService {
     private final CityRepository cityRepository;
     private final ProviderRepository providerRepository;
 
-    public ProductService(ProductRepository productRepository, ColorRepository colorRepository, CategoryRepository categoryRepository, StatusRepository statusRepository, CartRepository cartRepository,
+    public ProductService(ProductRepository productRepository,
+                          ColorRepository colorRepository,
+                          CategoryRepository categoryRepository,
+                          StatusRepository statusRepository,
+                          CartRepository cartRepository,
                           CityRepository cityRepository,
                           ProviderRepository providerRepository) {
         this.productRepository = productRepository;
@@ -31,7 +35,8 @@ public class ProductService {
         this.providerRepository = providerRepository;
     }
 
-    public Page<Product> list(Pageable pageable, Specification<Product> filter) {
+    public Page<Product> list(Pageable pageable,
+                              Specification<Product> filter) {
         return productRepository.findAll(filter, pageable);
     }
 

@@ -5,6 +5,7 @@ import jakarta.persistence.OneToMany;
 
 import java.util.LinkedList;
 import java.util.List;
+
 @Entity
 public class Status extends AbstractEntity {
     private String name;
