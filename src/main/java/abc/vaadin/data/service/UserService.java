@@ -12,14 +12,15 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 @Service
-public class UserService implements UserDetailsService {
-    private final UserRepository userRepository;
-    private final PasswordEncoder passwordEncoder;
-
-    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder) {
-        this.userRepository = userRepository;
+public class UserService extends AbstractService<User> implements UserDetailsService {
+    protected UserService(UserRepository repository, PasswordEncoder passwordEncoder,
+                          UserRepository userRepository) {
+        super(repository);
         this.passwordEncoder = passwordEncoder;
+        this.userRepository = userRepository;
     }
+    private final PasswordEncoder passwordEncoder;
+    private final UserRepository userRepository;
 
     public boolean isLoginAvailable(String login) {
         return userRepository.findByLogin(login) == null;
@@ -50,7 +51,7 @@ public class UserService implements UserDetailsService {
         }
     }
 
-    public void updateUser(String surname, String name, String patronymic, String avatar, Integer id) {
+    public void updateUser(String surname, String name, String patronymic, String avatar, Long id) {
         userRepository.updateUser(surname, name, patronymic, avatar, id);
     }
 

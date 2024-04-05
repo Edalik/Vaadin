@@ -10,7 +10,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 @Service
-public class ProductService {
+public class ProductService extends AbstractService<Product> {
     private final ProductRepository productRepository;
     private final ColorRepository colorRepository;
     private final CategoryRepository categoryRepository;
@@ -26,6 +26,7 @@ public class ProductService {
                           CartRepository cartRepository,
                           CityRepository cityRepository,
                           ProviderRepository providerRepository) {
+        super(productRepository);
         this.productRepository = productRepository;
         this.colorRepository = colorRepository;
         this.categoryRepository = categoryRepository;
@@ -120,7 +121,7 @@ public class ProductService {
         }
     }
 
-    public Cart getByIDs(Integer productId, Integer userId) {
+    public Cart getByIDs(Long productId, Long userId) {
         return cartRepository.getByIDs(productId, userId);
     }
 
@@ -132,7 +133,7 @@ public class ProductService {
         cartRepository.save(cart);
     }
 
-    public List<Product> findByUserID(Integer user_id) {
+    public List<Product> findByUserID(Long user_id) {
         return cartRepository.findByUserID(user_id);
     }
 

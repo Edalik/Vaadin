@@ -80,7 +80,7 @@ public class CartView extends VerticalLayout {
         return toolbar;
     }
 
-    private void removeFromCart(Integer product_id, Integer user_id) {
+    private void removeFromCart(Long product_id, Long user_id) {
         productService.deleteCart(productService.getByIDs(product_id, user_id));
         removeFromCart.setEnabled(false);
         updateList();

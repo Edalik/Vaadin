@@ -2,108 +2,116 @@ package abc.vaadin.components;
 
 import abc.vaadin.data.entity.Role;
 import abc.vaadin.data.entity.User;
-import com.vaadin.flow.component.ComponentEvent;
-import com.vaadin.flow.component.ComponentEventListener;
-import com.vaadin.flow.component.Key;
-import com.vaadin.flow.component.button.Button;
-import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.combobox.ComboBox;
-import com.vaadin.flow.component.formlayout.FormLayout;
-import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.textfield.PasswordField;
 import com.vaadin.flow.component.textfield.TextField;
-import com.vaadin.flow.data.binder.Binder;
-import com.vaadin.flow.shared.Registration;
 
-public class UserForm extends FormLayout {
-    Binder<User> binder = new Binder<>(User.class);
-    TextField surname = new TextField("Фамилия");
-    TextField name = new TextField("Имя");
-    TextField patronymic = new TextField("Отчество");
-    TextField avatar = new TextField("Аватар");
-    TextField login = new TextField("Логин");
-    PasswordField password = new PasswordField("Пароль");
-    ComboBox<Role> role = new ComboBox<>("Роль");
-    Button save = new Button("Сохранить");
-    Button delete = new Button("Удалить");
-    Button close = new Button("Отменить");
+public class UserForm extends EditForm<User> {
+    private final TextField name;
+    private final TextField surname;
+    private final TextField patronymic;
+    private final TextField avatar;
+    private final TextField login;
+    private final PasswordField password;
+    private final ComboBox<Role> role;
 
     public UserForm() {
-        role.setItems(Role.USER);
-        role.setValue(Role.USER);
+        this.name = this.createNameField();
+        this.surname = this.createSurnameField();
+        this.patronymic = this.createPatronymicField();
+        this.avatar = this.createAvatarField();
+        this.login = this.createLoginField();
+        this.password = this.createPasswordField();
+        this.role = this.createRoleField();
 
-        binder.bindInstanceFields(this);
-        add(surname, name, patronymic, avatar, login, password, role, createButtonsLayout());
+        add(
+                this.name,
+                this.surname,
+                this.patronymic,
+                this.avatar,
+                this.login,
+                this.password,
+                this.role
+        );
+
+        configureBinder();
     }
 
-    private HorizontalLayout createButtonsLayout() {
-        save.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
-        delete.addThemeVariants(ButtonVariant.LUMO_ERROR);
-        close.addThemeVariants(ButtonVariant.LUMO_TERTIARY);
+    //region Field-components initialization
 
-        save.addClickShortcut(Key.ENTER);
-        close.addClickShortcut(Key.ESCAPE);
-
-        save.addClickListener(event -> validateAndSave());
-        delete.addClickListener(event -> fireEvent(new UserForm.DeleteEvent(this, binder.getBean())));
-        close.addClickListener(event -> fireEvent(new UserForm.CloseEvent(this)));
-
-        binder.addStatusChangeListener(e -> save.setEnabled(binder.isValid()));
-
-        return new HorizontalLayout(save, delete, close);
+    private TextField createNameField() {
+        var field = new TextField("Имя");
+        field.setSizeFull();
+        return field;
     }
 
-    private void validateAndSave() {
-        if (binder.isValid()) {
-            fireEvent(new UserForm.SaveEvent(this, binder.getBean()));
-        }
+    private TextField createSurnameField() {
+        var field = new TextField("Фамилия");
+        field.setSizeFull();
+        return field;
     }
 
-    public void setUser(User user) {
-        binder.setBean(user);
+    private TextField createPatronymicField() {
+        var field = new TextField("Отчество");
+        field.setSizeFull();
+        return field;
     }
 
-    public static abstract class UserFormEvent extends ComponentEvent<UserForm> {
-        private User user;
-
-        protected UserFormEvent(UserForm source, User user) {
-            super(source, false);
-            this.user = user;
-        }
-
-        public User getUser() {
-            return user;
-        }
+    private TextField createAvatarField() {
+        var field = new TextField("Аватар");
+        field.setSizeFull();
+        return field;
     }
 
-    public static class SaveEvent extends UserForm.UserFormEvent {
-        SaveEvent(UserForm source, User user) {
-            super(source, user);
-        }
+    private TextField createLoginField() {
+        var field = new TextField("Логин");
+        field.setSizeFull();
+        return field;
     }
 
-    public static class DeleteEvent extends UserForm.UserFormEvent {
-        DeleteEvent(UserForm source, User user) {
-            super(source, user);
-        }
-
+    private PasswordField createPasswordField() {
+        var field = new PasswordField("Пароль");
+        field.setSizeFull();
+        return field;
     }
 
-    public static class CloseEvent extends UserForm.UserFormEvent {
-        CloseEvent(UserForm source) {
-            super(source, null);
-        }
+    private ComboBox<Role> createRoleField() {
+        var field = new ComboBox<Role>("Роль");
+        field.setItems(Role.values());
+        field.setItemLabelGenerator(Role::toString);
+        field.setSizeFull();
+        return field;
     }
 
-    public Registration addDeleteListener(ComponentEventListener<UserForm.DeleteEvent> listener) {
-        return addListener(UserForm.DeleteEvent.class, listener);
+    //endregion
+
+    @Override
+    public User createEntity() {
+        return new User();
     }
 
-    public Registration addSaveListener(ComponentEventListener<UserForm.SaveEvent> listener) {
-        return addListener(UserForm.SaveEvent.class, listener);
-    }
-
-    public Registration addCloseListener(ComponentEventListener<UserForm.CloseEvent> listener) {
-        return addListener(UserForm.CloseEvent.class, listener);
+    @Override
+    protected void configureBinder() {
+        binder.forField(this.name)
+                .asRequired("Поле должно быть заполнено")
+                .bind(User::getName, User::setName);
+        binder.forField(this.surname)
+                .asRequired("Поле должно быть заполнено")
+                .bind(User::getSurname, User::setSurname);
+        binder.forField(this.patronymic)
+                .asRequired("Поле должно быть заполнено")
+                .bind(User::getPatronymic, User::setPatronymic);
+        binder.forField(this.avatar)
+                .asRequired("Поле должно быть заполнено")
+                .bind(User::getAvatar, User::setAvatar);
+        binder.forField(this.login)
+                .asRequired("Поле должно быть заполнено")
+                .bind(User::getLogin, User::setLogin);
+        binder.forField(this.password)
+                .asRequired("Поле должно быть заполнено")
+                .bind(User::getPassword, User::setPassword);
+        binder.forField(this.role)
+                .asRequired("Поле должно быть заполнено")
+                .bind(User::getRole, User::setRole);
     }
 }

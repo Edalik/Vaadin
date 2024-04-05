@@ -275,7 +275,7 @@ public class ProductView extends VerticalLayout {
         return toolbar;
     }
 
-    private void addToCart(Integer product_id, Integer user_id) {
+    private void addToCart(Long product_id, Long user_id) {
         productService.saveCart(new Cart(product_id, user_id));
         addToCart.setEnabled(false);
     }
