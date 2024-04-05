@@ -1,4 +1,4 @@
-FROM openjdk:19-jdk-slim
-COPY target/*.jar app.jar
-EXPOSE 8080
+FROM amazoncorretto:17
+COPY target/*.jar Vaadin-Course.jar
+EXPOSE 8081
 ENTRYPOINT ["java", "-jar", "/app.jar"]
