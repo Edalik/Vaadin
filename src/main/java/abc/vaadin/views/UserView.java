@@ -1,5 +1,6 @@
 package abc.vaadin.views;
 
+import abc.vaadin.components.ProductFilters;
 import abc.vaadin.components.UserForm;
 import abc.vaadin.data.entity.User;
 import abc.vaadin.data.service.ProductService;
@@ -22,6 +23,11 @@ public class UserView extends GridView<User> {
     @Override
     protected UserForm createDialogProto() {
         return new UserForm();
+    }
+
+    @Override
+    protected ProductFilters createFiltersProto() {
+        return null;
     }
 
     @Override

@@ -19,7 +19,8 @@ public interface UserRepository extends AbstractRepository<User> {
             "select u from User u " +
                     "where lower(u.name) like lower(concat('%', :searchTerm, '%'))" +
                     "or lower(u.surname) like lower(concat('%', :searchTerm, '%'))" +
-                    "or lower(u.patronymic) like lower(concat('%', :searchTerm, '%'))"
+                    "or lower(u.patronymic) like lower(concat('%', :searchTerm, '%'))" +
+                    "or lower(u.login) like lower(concat('%', :searchTerm, '%'))"
     )
     Page<User> find(@Param("searchTerm") String filter, Pageable pageable);
 

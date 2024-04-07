@@ -1,6 +1,7 @@
 package abc.vaadin.views;
 
 import abc.vaadin.components.CityForm;
+import abc.vaadin.components.ProductFilters;
 import abc.vaadin.data.entity.City;
 import abc.vaadin.data.service.CityService;
 import abc.vaadin.data.service.ProductService;
@@ -22,6 +23,11 @@ public class CityView extends GridView<City> {
     @Override
     protected CityForm createDialogProto() {
         return new CityForm();
+    }
+
+    @Override
+    protected ProductFilters createFiltersProto() {
+        return null;
     }
 
     @Override

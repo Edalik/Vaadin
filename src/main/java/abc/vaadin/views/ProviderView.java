@@ -1,5 +1,6 @@
 package abc.vaadin.views;
 
+import abc.vaadin.components.ProductFilters;
 import abc.vaadin.components.ProviderForm;
 import abc.vaadin.data.entity.Provider;
 import abc.vaadin.data.service.ProductService;
@@ -22,6 +23,11 @@ public class ProviderView extends GridView<Provider> {
     @Override
     protected ProviderForm createDialogProto() {
         return new ProviderForm(productService.findAllCities(""));
+    }
+
+    @Override
+    protected ProductFilters createFiltersProto() {
+        return null;
     }
 
     @Override

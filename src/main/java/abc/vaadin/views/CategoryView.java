@@ -1,6 +1,7 @@
 package abc.vaadin.views;
 
 import abc.vaadin.components.CategoryForm;
+import abc.vaadin.components.ProductFilters;
 import abc.vaadin.data.entity.Category;
 import abc.vaadin.data.service.CategoryService;
 import abc.vaadin.data.service.ProductService;
@@ -22,6 +23,11 @@ public class CategoryView extends GridView<Category> {
     @Override
     protected CategoryForm createDialogProto() {
         return new CategoryForm();
+    }
+
+    @Override
+    protected ProductFilters createFiltersProto() {
+        return null;
     }
 
     @Override

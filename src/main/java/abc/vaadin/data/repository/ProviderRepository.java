@@ -15,8 +15,9 @@ public interface ProviderRepository extends AbstractRepository<Provider> {
     @Query(
             "select p from Provider p " +
                     "where lower(p.name) like lower(concat('%', :searchTerm, '%'))" +
-                    "or lower(p.email) like lower(concat('%', :searchTerm, '%'))"+
-                    "or lower(p.number) like lower(concat('%', :searchTerm, '%'))"
+                    "or lower(p.email) like lower(concat('%', :searchTerm, '%'))" +
+                    "or lower(p.number) like lower(concat('%', :searchTerm, '%'))" +
+                    "or lower(p.city.name) like lower(concat('%', :searchTerm, '%'))"
     )
     Page<Provider> find(@Param("searchTerm") String filter, Pageable pageable);
 

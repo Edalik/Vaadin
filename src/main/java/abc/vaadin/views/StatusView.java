@@ -1,5 +1,6 @@
 package abc.vaadin.views;
 
+import abc.vaadin.components.ProductFilters;
 import abc.vaadin.components.StatusForm;
 import abc.vaadin.data.entity.Status;
 import abc.vaadin.data.service.ProductService;
@@ -22,6 +23,11 @@ public class StatusView extends GridView<Status> {
     @Override
     protected StatusForm createDialogProto() {
         return new StatusForm();
+    }
+
+    @Override
+    protected ProductFilters createFiltersProto() {
+        return null;
     }
 
     @Override

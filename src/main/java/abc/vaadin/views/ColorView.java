@@ -1,6 +1,7 @@
 package abc.vaadin.views;
 
 import abc.vaadin.components.ColorForm;
+import abc.vaadin.components.ProductFilters;
 import abc.vaadin.data.entity.Color;
 import abc.vaadin.data.service.ColorService;
 import abc.vaadin.data.service.ProductService;
@@ -22,6 +23,11 @@ public class ColorView extends GridView<Color> {
     @Override
     protected ColorForm createDialogProto() {
         return new ColorForm();
+    }
+
+    @Override
+    protected ProductFilters createFiltersProto() {
+        return null;
     }
 
     @Override

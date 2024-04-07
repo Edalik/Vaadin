@@ -2,6 +2,7 @@ package abc.vaadin.views;
 
 import abc.vaadin.components.EditForm;
 import abc.vaadin.components.EditFormEvents;
+import abc.vaadin.components.ProductFilters;
 import abc.vaadin.data.entity.AbstractEntity;
 import abc.vaadin.data.service.AbstractService;
 import abc.vaadin.data.service.ProductService;
@@ -22,12 +23,14 @@ import com.vaadin.flow.router.RouteParameters;
 public abstract class GridView<T extends AbstractEntity> extends VerticalLayout implements BeforeEnterObserver {
     protected final AbstractService<T> entityService;
     protected final ProductService productService;
-    private final Grid<T> grid;
+    protected final Grid<T> grid;
     private final ConfigurableFilterDataProvider<T, Void, String> dataProvider;
     private T selectedEntity;
+    protected final ProductFilters productFilters;
     private final TextField filterText;
     private Button addButton;
     private Button editButton;
+    private final HorizontalLayout toolBar;
     private EditForm<T> dialog;
 
     public GridView(AbstractService<T> entityService, ProductService productService) {
@@ -38,14 +41,24 @@ public abstract class GridView<T extends AbstractEntity> extends VerticalLayout 
         this.filterText = createFilterText();
         this.grid = createGrid();
         this.dialog = createDialog();
+        this.productFilters = createFilters();
+        this.toolBar = createToolbar();
 
         setPadding(true);
         setSizeFull();
 
-        add(
-                createToolbar(),
-                createContent()
-        );
+        if (productFilters != null) {
+            add(
+                    productFilters,
+                    toolBar,
+                    createContent()
+            );
+        } else {
+            add(
+                    toolBar,
+                    createContent()
+            );
+        }
     }
 
     private ConfigurableFilterDataProvider<T, Void, String> getDataProvider() {
@@ -53,6 +66,13 @@ public abstract class GridView<T extends AbstractEntity> extends VerticalLayout 
     }
 
     //region Field-components initialization
+
+    private ProductFilters createFilters() {
+
+        return createFiltersProto();
+    }
+
+    protected abstract ProductFilters createFiltersProto();
 
     private TextField createFilterText() {
         TextField filterText = new TextField();
@@ -71,7 +91,7 @@ public abstract class GridView<T extends AbstractEntity> extends VerticalLayout 
         grid.setSizeFull();
         grid.asSingleSelect().addValueChangeListener(event -> selectedEntity = event.getValue());
         grid.asSingleSelect().addValueChangeListener(event -> editButton.setEnabled(event.getValue() != null));
-        grid.setItems(dataProvider);
+        grid.setDataProvider(dataProvider);
 
         return grid;
     }
@@ -119,6 +139,24 @@ public abstract class GridView<T extends AbstractEntity> extends VerticalLayout 
 
     //endregion
 
+    //region Form configure
+    protected void setFilterTextVisibility(boolean isVisible){
+        filterText.setVisible(isVisible);
+    }
+
+    protected void setAddButtonVisibility(boolean isVisible){
+        addButton.setVisible(isVisible);
+    }
+
+    protected void setEditButtonVisibility(boolean isVisible){
+        editButton.setVisible(isVisible);
+    }
+
+    protected void addToToolBar(Component... components){
+        toolBar.add(components);
+    }
+    //endregion
+
     //region Form logic
 
     private void addEntity() {
@@ -134,14 +172,14 @@ public abstract class GridView<T extends AbstractEntity> extends VerticalLayout 
             entityService.update(entityToSave);
         }
 
-        dataProvider.refreshAll();
+        refreshGrid();
         dialog.close();
     }
 
     private void deleteEntity(EditFormEvents.DeleteEvent event) {
         var entityToDelete = dialog.getEntity();
         entityService.delete(entityToDelete);
-        dataProvider.refreshAll();
+        refreshGrid();
         dialog.close();
     }
 
@@ -151,7 +189,7 @@ public abstract class GridView<T extends AbstractEntity> extends VerticalLayout 
     }
 
     protected void refreshGrid() {
-        dataProvider.refreshAll();
+        grid.getDataProvider().refreshAll();
     }
 
     //endregion
