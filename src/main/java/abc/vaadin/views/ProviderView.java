@@ -1,6 +1,6 @@
 package abc.vaadin.views;
 
-import abc.vaadin.components.ProductFilters;
+import abc.vaadin.components.filters.ProductFilters;
 import abc.vaadin.components.ProviderForm;
 import abc.vaadin.data.entity.Provider;
 import abc.vaadin.data.service.ProductService;

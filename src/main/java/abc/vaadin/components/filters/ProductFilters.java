@@ -1,58 +1,43 @@
-package abc.vaadin.components;
+package abc.vaadin.components.filters;
 
 import abc.vaadin.data.entity.*;
 import abc.vaadin.data.service.ProductService;
-import com.vaadin.flow.component.button.Button;
-import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.checkbox.CheckboxGroup;
 import com.vaadin.flow.component.combobox.MultiSelectComboBox;
-import com.vaadin.flow.component.html.Div;
-import com.vaadin.flow.component.orderedlayout.FlexComponent;
-import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.textfield.IntegerField;
 import com.vaadin.flow.component.textfield.TextField;
-import com.vaadin.flow.theme.lumo.LumoUtility;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
 import jakarta.persistence.criteria.Predicate;
 import jakarta.persistence.criteria.Root;
-import org.springframework.data.jpa.domain.Specification;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class ProductFilters extends Div implements Specification<Product> {
-    private final TextField brand = new TextField("Бренд");
-    private final TextField model = new TextField("Модель");
-    private final IntegerField priceFloor = new IntegerField("Цена от...");
-    private final IntegerField priceCeiling = new IntegerField("Цена до...");
-    private final MultiSelectComboBox<Color> colors = new MultiSelectComboBox<>("Цвета");
-    private final MultiSelectComboBox<Category> categories = new MultiSelectComboBox<>("Категории");
-    private final MultiSelectComboBox<Provider> providers = new MultiSelectComboBox<>("Поставщик");
-    private final CheckboxGroup<Status> statuses = new CheckboxGroup<>("Статус");
-    public final Button resetBtn;
-    public final Button searchBtn;
+public class ProductFilters extends Filters<Product> {
+    private final ProductService productService;
+    private final TextField brand;
+    private final TextField model;
+    private final IntegerField priceFloor;
+    private final IntegerField priceCeiling;
+    private final MultiSelectComboBox<Color> colors;
+    private final MultiSelectComboBox<Category> categories;
+    private final MultiSelectComboBox<Provider> providers;
+    private final CheckboxGroup<Status> statuses;
 
     public ProductFilters(Runnable onSearch, ProductService productService) {
+        super(onSearch);
 
-        setWidthFull();
+        this.brand = createBrandField();
+        this.model = createModelField();
+        this.priceFloor = createPriceFloorField();
+        this.priceCeiling = createPriceCeilingField();
+        this.productService = productService;
+        this.colors = createColorsBox();
+        this.categories = createCategoriesBox();
+        this.providers = createProvidersBox();
+        this.statuses = createStatusesBox();
 
-        colors.setItems(productService.findAllColors(""));
-        colors.setItemLabelGenerator(Color::getName);
-
-        categories.setItems(productService.findAllCategories(""));
-        categories.setItemLabelGenerator(Category::getName);
-
-        providers.setItems(productService.findAllProviders(""));
-        providers.setItemLabelGenerator(Provider::toString);
-
-        statuses.setItems(productService.findAllStatuses(""));
-        statuses.setItemLabelGenerator(Status::getName);
-        statuses.addClassName("double-width");
-
-        // Action buttons
-        resetBtn = new Button("Сбросить");
-        resetBtn.addThemeVariants(ButtonVariant.LUMO_TERTIARY);
         resetBtn.addClickListener(e -> {
             brand.clear();
             model.clear();
@@ -62,23 +47,73 @@ public class ProductFilters extends Div implements Specification<Product> {
             categories.clear();
             statuses.clear();
             providers.clear();
-            onSearch.run();
         });
-        searchBtn = new Button("Применить");
-        searchBtn.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
-        searchBtn.addClickListener(e -> onSearch.run());
 
-        HorizontalLayout actions = new HorizontalLayout(resetBtn, searchBtn);
-        actions.addClassName(LumoUtility.Gap.SMALL);
-        actions.addClassName("actions");
-        actions.setWidthFull();
-        actions.setAlignItems(FlexComponent.Alignment.BASELINE);
+        addToFilters(brand, model, priceFloor, priceCeiling, colors, categories, providers, statuses);
+    }
 
-        HorizontalLayout filters = new HorizontalLayout(brand, model, priceFloor, priceCeiling, colors, categories, providers, statuses);
-        filters.setWidthFull();
-        filters.setAlignItems(FlexComponent.Alignment.BASELINE);
+    private TextField createBrandField() {
+        var field = new TextField("Бренд");
+        field.setClearButtonVisible(true);
 
-        add(filters, actions);
+        return field;
+    }
+
+    private TextField createModelField() {
+        var field = new TextField("Модель");
+        field.setClearButtonVisible(true);
+
+        return field;
+    }
+
+    private IntegerField createPriceFloorField() {
+        var field = new IntegerField("Цена от...");
+        field.setClearButtonVisible(true);
+
+        return field;
+    }
+
+    private IntegerField createPriceCeilingField() {
+        var field = new IntegerField("Цена до...");
+        field.setClearButtonVisible(true);
+
+        return field;
+    }
+
+    private MultiSelectComboBox<Color> createColorsBox() {
+        var box = new MultiSelectComboBox<Color>("Цвета");
+        box.setItems(productService.findAllColors(""));
+        box.setItemLabelGenerator(Color::getName);
+        box.setClearButtonVisible(true);
+
+        return box;
+    }
+
+    private MultiSelectComboBox<Category> createCategoriesBox() {
+        var box = new MultiSelectComboBox<Category>("Категории");
+        box.setItems(productService.findAllCategories(""));
+        box.setItemLabelGenerator(Category::getName);
+        box.setClearButtonVisible(true);
+
+        return box;
+    }
+
+    private MultiSelectComboBox<Provider> createProvidersBox() {
+        var box = new MultiSelectComboBox<Provider>("Поставщик");
+        box.setItems(productService.findAllProviders(""));
+        box.setItemLabelGenerator(Provider::toString);
+        box.setClearButtonVisible(true);
+
+        return box;
+    }
+
+    private CheckboxGroup<Status> createStatusesBox() {
+        var box = new CheckboxGroup<Status>("Статус");
+        box.setItems(productService.findAllStatuses(""));
+        box.setItemLabelGenerator(Status::getName);
+        box.addClassName("double-width");
+
+        return box;
     }
 
     @Override
@@ -158,5 +193,4 @@ public class ProductFilters extends Div implements Specification<Product> {
         }
         return criteriaBuilder.and(predicates.toArray(Predicate[]::new));
     }
-
 }

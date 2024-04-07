@@ -1,7 +1,7 @@
 package abc.vaadin.views;
 
 import abc.vaadin.components.CityForm;
-import abc.vaadin.components.ProductFilters;
+import abc.vaadin.components.filters.ProductFilters;
 import abc.vaadin.data.entity.City;
 import abc.vaadin.data.service.CityService;
 import abc.vaadin.data.service.ProductService;

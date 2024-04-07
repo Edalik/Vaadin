@@ -1,7 +1,7 @@
 package abc.vaadin.views;
 
 import abc.vaadin.components.CategoryForm;
-import abc.vaadin.components.ProductFilters;
+import abc.vaadin.components.filters.ProductFilters;
 import abc.vaadin.data.entity.Category;
 import abc.vaadin.data.service.CategoryService;
 import abc.vaadin.data.service.ProductService;

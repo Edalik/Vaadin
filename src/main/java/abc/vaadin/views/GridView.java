@@ -2,7 +2,7 @@ package abc.vaadin.views;
 
 import abc.vaadin.components.EditForm;
 import abc.vaadin.components.EditFormEvents;
-import abc.vaadin.components.ProductFilters;
+import abc.vaadin.components.filters.ProductFilters;
 import abc.vaadin.data.entity.AbstractEntity;
 import abc.vaadin.data.service.AbstractService;
 import abc.vaadin.data.service.ProductService;

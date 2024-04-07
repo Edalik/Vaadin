@@ -1,7 +1,7 @@
 package abc.vaadin.views;
 
 import abc.vaadin.components.ColorForm;
-import abc.vaadin.components.ProductFilters;
+import abc.vaadin.components.filters.ProductFilters;
 import abc.vaadin.data.entity.Color;
 import abc.vaadin.data.service.ColorService;
 import abc.vaadin.data.service.ProductService;
